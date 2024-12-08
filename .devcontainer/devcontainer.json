@@ -1,18 +1,59 @@
 {
-  "name": "Jekyll website",
-  "build": {
+    "name": "Jekyll website",
+    "build": {
         "dockerfile": "Dockerfile",
         "args": {}
     },
-  "forwardPorts": [4000],
-  "portsAttributes": {
-    "4000": {
-      "label": "Website"
+    "forwardPorts": [
+        4000
+    ],
+    "portsAttributes": {
+        "4000": {
+            "label": "Website"
+        }
+    },
+    "remoteUser": "nonroot",
+    "customizations": {
+        "vscode": {
+            "extensions": [],
+            "settings": {
+                "tasks": {
+                    // https://code.visualstudio.com/docs/editor/tasks#vscode
+                    "version": "2.0.0",
+                    "tasks": [
+                        {
+                            "label": "jekyll",
+                            "dependsOn": [
+                                "bundle install",
+                                "jekyll serve"
+                            ],
+                            "dependsOrder": "sequence",
+                            "runOptions": {
+                                "runOn": "folderOpen"
+                            },
+                            "problemMatcher": []
+                        },
+                        {
+                            "label": "bundle install",
+                            "type": "shell",
+                            "command": "bundle install --retry 5 --jobs 20",
+                            "problemMatcher": [],
+                            "presentation": {
+                                "panel": "dedicated"
+                            }
+                        },
+                        {
+                            "label": "jekyll serve",
+                            "type": "shell",
+                            "command": "bundle exec jekyll serve --host 0.0.0.0 --livereload",
+                            "problemMatcher": [],
+                            "presentation": {
+                                "panel": "dedicated"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
     }
-  },
-  "remoteUser": "nonroot",
-  "postCreateCommand": {
-    "bundle": "bundle install --retry 5 --jobs 20"
-  },
-  "postAttachCommand": "bundle exec jekyll serve --host 0.0.0.0"
 }
