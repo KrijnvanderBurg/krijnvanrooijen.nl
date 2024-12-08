@@ -26,7 +26,7 @@ I demonstrated how seemingly simple code can quickly become complex and unmanage
 
 ![ABN-AMRO](/assets/graphics/speaking/2024-08-12-krijn-at-ABN-presenting-object-oriented.jpg){: .w-50 .left .shadow .rounded-10}
 
-While working as an external consultant for ABN AMRO, I gave bi-weekly presentations about fundamental software engineering and data engineering principles. Topics ranged from object-oriented and design patterns, to CICD on Azure and abstract- and metaclasses.<br><br>
+While working as an external consultant for ABN AMRO, I gave bi-weekly presentations about fundamental software engineering and data engineering principles. Topics ranged from object-oriented and design patterns, to CICD on Azure and abstract- and metaclasses.<br><br><br>
 
 ---
 
