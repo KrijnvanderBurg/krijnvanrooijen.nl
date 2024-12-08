@@ -1,0 +1,14 @@
+---
+---
+
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* append your custom style below */
+
+footer p:nth-of-type(2) {
+  display: none;
+}
