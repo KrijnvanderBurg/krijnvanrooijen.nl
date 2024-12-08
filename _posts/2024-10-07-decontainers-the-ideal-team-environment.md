@@ -8,7 +8,7 @@ tags:
 - containers
 - code quality
 - ruff
-image: /assets/graphics/2024-10-07-devcontainers-the-ideal-team-environment/vscode_devcontainer_screenshot.webp
+image: /assets/graphics/2024-10-07-devcontainers-the-ideal-team-environment/thumbnail-whale-carrying-containers.png
 pin: false
 ---
 
