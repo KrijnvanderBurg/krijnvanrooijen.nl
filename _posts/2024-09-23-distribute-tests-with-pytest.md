@@ -8,7 +8,7 @@ tags:
 - CICD
 - Azure Pipelines
 - Distributed
-image: /assets/graphics/2024-09-23-distribute-tests-with-pytest/azure_devops_pipeline_screenshot.webp
+image: /assets/graphics/2024-09-23-distribute-tests-with-pytest/thumbnail-colour-clock-distributed-pytest.png
 pin: false
 ---
 
@@ -124,4 +124,4 @@ jobs:
 
 <br>
 
-![actions-view](/assets/graphics/2024-09-23-distribute-tests-with-pytest/azure_devops_pipeline_screenshot.webp)
+![actions-view](/assets/graphics/2024-09-23-distribute-tests-with-pytest/azure_devops_pipeline_screenshot.png)

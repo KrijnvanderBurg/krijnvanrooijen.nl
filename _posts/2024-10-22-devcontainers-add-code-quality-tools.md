@@ -1,5 +1,5 @@
 ---
-title: "How to add Code Quality tools to your IDE: Moving beyond Pre-commit— Zero-BS #3"
+title: "DevContainers Improved: Integrating Code Quality Checks for Continuous Feedback - Part 2/3"
 date: 2024-10-22
 excerpt: "Code quality tools are essential for maintaining consistency and catching errors in a codebase. By integrating code quality tools directly into the IDE, errors can be identified and corrected instantly, streamlining the workflow."
 tags:
@@ -8,7 +8,7 @@ tags:
 - containers
 - vscode
 - ruff
-image: /assets/graphics/2024-10-22-add-code-quality-tools-to-devcontainer/vscode_code_quality_tools_screenshot.png
+image: /assets/graphics/2024-10-22-devcontainers-add-code-quality-tools/thumbnail-ship-approaching-lighthouse.png
 pin: false
 ---
 

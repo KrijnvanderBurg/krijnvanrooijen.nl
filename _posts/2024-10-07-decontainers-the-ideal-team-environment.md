@@ -1,5 +1,5 @@
 ---
-title: "DevContainers: The ideal standardised team Dev environment— Zero-BS #2"
+title: "DevContainers Introduction: The Ideal Standardized Team Development Environment — Part 1/3"
 date: 2024-10-07
 excerpt: "Container technologies are well-known for solving the aforementioned problems in production environments, but can also effectively solve these problems for local development environments."
 tags:

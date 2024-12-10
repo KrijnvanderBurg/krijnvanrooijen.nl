@@ -1,5 +1,5 @@
 ---
-title: "How I automate my entire VScode akin to CICD— Zero-BS #4"
+title: "DevContainers Mastered: Automating Manual Workflows with VSCode Tasks - Part 3/3"
 date: 2024-11-11
 excerpt: "Turn VSCode into your own CI/CD engine - automate repetitive tasks, improve code quality, and ensure consistency for your whole team."
 tags:
@@ -8,7 +8,7 @@ tags:
 - python
 - devcontainer
 - devops
-image: /assets/graphics/2024-11-11-automate-vscode-akin-to-cicd/thumbnail_origami_vscode.png
+image: /assets/graphics/2024-11-11-devcontainers-automate-workflow-tasks/thumbnail-origami-cranes.jpg
 pin: false
 ---
 
