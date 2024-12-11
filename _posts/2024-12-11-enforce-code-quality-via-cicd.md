@@ -1,6 +1,6 @@
 ---
 title: "How to enforce Code Quality standards using CI/CD"
-date: 2024-11-11
+date: 2024-12-11
 excerpt: "Turn VSCode into your own CI/CD engine - automate repetitive tasks, improve code quality, and ensure consistency for your whole team."
 tags:
 - cicd
@@ -10,7 +10,7 @@ tags:
 - python
 - devops
 image: /assets/graphics/2024-12-11-enforce-code-quality-via-cicd/thumbnail-scale-set-python-security.png
-pin: true
+pin: false
 ---
 
 Setting Code Quality standards is non-negotiable software development. Even more so for corporate environments where software products slowly mould into legacy, living an unintentionally and unhealthy long lifespan.
