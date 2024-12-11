@@ -74,7 +74,7 @@ Start by creating a `tasks.json` file in the `.vscode` folder of your project. T
 
 This configuration defines two tasks: one for installing dependencies and another for running tests, both triggered via shell comma
 
-![actions-view](/assets/graphics/2024-11-11-devcontainers-atuomate-workflow-tasks/vscode_tasks_ui_screenshot.webp)
+![actions-view](/assets/graphics/2024-11-11-devcontainers-automate-workflow-tasks/vscode_tasks_ui_screenshot.webp)
 
 ## Organising and Grouping Tasks
 
