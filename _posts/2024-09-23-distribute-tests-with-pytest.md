@@ -124,4 +124,4 @@ jobs:
 
 <br>
 
-![actions-view](/assets/graphics/2024-09-23-distribute-tests-with-pytest/azure_devops_pipeline_screenshot.png)
+![actions-view](/assets/graphics/2024-09-23-distribute-tests-with-pytest/azure_devops_pipeline_screenshot.webp)

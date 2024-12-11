@@ -82,7 +82,7 @@ The Marketplace page for the VSCode extension for Ruff details the available con
 
 Every team member using this DevContainer will automatically have a linter and formatter included in their environment, detailing all identified issues in the integrated UI of VSCode under the Problems tab.
 
-![actions-view](/assets/graphics/2024-10-22-add-code-quality-tools-to-devcontainer/vscode_code_quality_tools_screenshot.png)
+![actions-view](/assets/graphics/2024-10-22-devcontainers-add-code-quality-tools/vscode_code_quality_tools_screenshot.png)
 
 Store the configuration file and `devcontainer.json` in Git. When team members pull the repository and rebuild the container, the Ruff autoformatter will work automatically, requiring no manual setup. This ensures the entire team formats code according to the specified config file, achieving standardization effortlessly. These configuration files can also serve as starting points for discussions on additional tools to incorporate and settings to enable, given that the workflow remains consistent for everyone.
 
