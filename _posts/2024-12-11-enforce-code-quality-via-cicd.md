@@ -10,7 +10,7 @@ tags:
 - python
 - devops
 image: /assets/graphics/2024-12-11-enforce-code-quality-via-cicd/thumbnail-scale-set-python-security.png
-pin: false
+pin: true
 ---
 
 Setting Code Quality standards is non-negotiable software development. Even more so for corporate environments where software products slowly mould into legacy, living an unintentionally and unhealthy long lifespan.
