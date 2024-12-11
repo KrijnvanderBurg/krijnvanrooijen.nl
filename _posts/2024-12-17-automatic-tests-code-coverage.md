@@ -1,7 +1,7 @@
 ---
 title: "[DRAFT] Automatically Generate and Visualize Python Code Coverage in VSCode"
 date: 2024-12-11
-excerpt: "Learn how to automate Python code coverage and visualize results directly in VSCode, improve your tests with real-time insights."
+excerpt: "How to automate Python code coverage and visualize results directly in VSCode, improve your tests with real-time insights."
 tags:
 - code coverage
 - pytest
@@ -42,15 +42,20 @@ There are two main ways to automate code coverage. Via the VSCode python extensi
 When the Python/Pytest extension is triggered through the VSCode UI to run tests, it executes a pytest command in the background. This command can be further customized by adding additional options via the pytestArgs setting. Specifically, the .coveragerc configuration file is included, and the desired output format for the coverage report is defined, as previously discussed in the pytest section.
 
 ```json
-"settings": {
-    "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": [
-        "./src/",
-        "./tests/",
-        "--cov=./",
-        "--cov-report=xml:./coverage.xml",
-        "--cov-config=${workspaceFolder}/../.tools/.coveragerc"
-    ]
+"customizations": {
+    "vscode": {
+        "extensions": [],
+        "settings": {
+            "python.testing.pytestEnabled": true,
+            "python.testing.pytestArgs": [
+                "./src/",
+                "./tests/",
+                "--cov=./",
+                "--cov-report=xml:./coverage.xml",
+                "--cov-config=${workspaceFolder}/../.tools/.coveragerc"
+            ]
+        }
+    }
 }
 ```
 {: file='devcontainer.json' }
@@ -64,22 +69,26 @@ VSCode tasks is a simple but effective way of automating any type of tool or com
 For more on how to use VSCode tasks, and how they work in a DevContainer setup, check out my earlier article: [*DevContainers Mastered: Automating Manual Workflows with VSCode Tasks — Part 3/3*](https://medium.com/@krijnvanderburg/how-i-automate-my-entire-ide-vscode-akin-to-cicd-992568ee7fb5). The configuration below runs pytest coverage whenever the project folder is opened:
 
 ```json
-{
-    "label": "pytest coverage",
-    "type": "shell",
-    "command": "pytest",
-    "args": [
-        "./src/",
-        "./tests/",
-        "--cov=./",
-        "--cov-report=xml:./coverage.xml",
-        "--cov-config=../.tools/.coveragerc"
-    ],
-    "dependsOn": [
-        "Poetry Install"
-    ],
-    "runOptions": {
-        "runOn": "folderOpen"
+"tasks": {
+    // https://code.visualstudio.com/docs/editor/tasks#vscode
+    "version": "2.0.0",
+    {
+        "label": "pytest coverage",
+        "type": "shell",
+        "command": "pytest",
+        "args": [
+            "./src/",
+            "./tests/",
+            "--cov=./",
+            "--cov-report=xml:./coverage.xml",
+            "--cov-config=../.tools/.coveragerc"
+        ],
+        "dependsOn": [
+            "Poetry Install"
+        ],
+        "runOptions": {
+            "runOn": "folderOpen"
+        }
     }
 }
 ```
