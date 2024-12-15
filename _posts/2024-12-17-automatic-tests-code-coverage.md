@@ -1,7 +1,7 @@
 ---
 title: "[DRAFT] Automatically Generate and Visualize Python Code Coverage in VSCode"
 date: 2024-12-11
-excerpt: "How to automate Python code coverage and visualize results directly in VSCode, improve your tests with real-time insights."
+excerpt: "Learn how I automated my Python code coverage in VSCode! Instantly visualize coverage data in the editor for faster, more efficient development."
 tags:
 - code coverage
 - pytest
@@ -9,7 +9,7 @@ tags:
 - vscode tasks
 - devcontainer
 image: /assets/graphics/2024-12-17-automatic-tests-code-coverage/thumbnail-code-coverage-veiled.png
-pin: true
+pin: false
 ---
 
 Many teams already have code coverage set up in their CI/CD pipelines, often through tools like pytest or SonarQube. However, accessing these results usually involves waiting for pipeline runs to complete or navigating to external dashboards, creating a barrier for developers. This barrier discourages frequent checks on coverage, with many only reviewing it when a pipeline fails due to insufficient coverage. This article shows how to automate test coverage with the pytest framework, integrate it with VSCode, and leverage the `Coverage Gutters` extension for real-time feedback. 

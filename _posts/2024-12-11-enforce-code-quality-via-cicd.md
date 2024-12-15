@@ -1,7 +1,7 @@
 ---
 title: "How to enforce Code Quality standards using CI/CD"
 date: 2024-12-11
-excerpt: "Turn VSCode into your own CI/CD engine - automate repetitive tasks, improve code quality, and ensure consistency for your whole team."
+excerpt: "Learn how to enforce code quality standards with CI/CD pipelines for tools like Ruff, ensuring consistency and security in your software development."
 tags:
 - cicd
 - azure pipelines

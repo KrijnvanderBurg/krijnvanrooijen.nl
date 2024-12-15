@@ -1,7 +1,7 @@
 ---
 title: "DevContainers Improved: Integrating Code Quality Checks for Continuous Feedback - Part 2/3"
 date: 2024-10-22
-excerpt: "Code quality tools are essential for maintaining consistency and catching errors in a codebase. By integrating code quality tools directly into the IDE, errors can be identified and corrected instantly, streamlining the workflow."
+excerpt: "Improve your workflow with DevContainers! Integrate code quality checks in VSCode for real-time feedback and error-free code."
 tags:
 - code quality
 - devcontainer

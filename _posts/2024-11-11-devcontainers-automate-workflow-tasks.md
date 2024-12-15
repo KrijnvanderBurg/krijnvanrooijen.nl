@@ -1,7 +1,7 @@
 ---
 title: "DevContainers Mastered: Automating Manual Workflows with VSCode Tasks - Part 3/3"
 date: 2024-11-11
-excerpt: "Turn VSCode into your own CI/CD engine - automate repetitive tasks, improve code quality, and ensure consistency for your whole team."
+excerpt: "Automate your local development workflows with VSCode tasks and DevContainers akin to CICD. Remove all manual forms of testing, dependencies, and more!"
 tags:
 - vscode
 - tasks

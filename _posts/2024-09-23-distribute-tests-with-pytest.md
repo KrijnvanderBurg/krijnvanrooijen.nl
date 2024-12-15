@@ -1,7 +1,7 @@
 ---
-title: "Distribute Tests with Pytest-Split for Faster CI/CD Execution — Zero-BS #1"
+title: "Distribute Tests with Pytest-Split for Faster CI/CD Execution"
 date: 2024-09-23
-excerpt: "Speed up test suite execution by using pytest-split to distribute tests across multiple CI/CD agents. Pytest-split is a plugin for the pytest framework that allows users to split their test suite into smaller groups for parallel execution, reducing overall test runtime."
+excerpt: "Speed up your CI/CD with pytest-split! Learn how to distribute tests across agents for faster execution in Azure Pipelines and other platforms."
 tags:
 - pytest
 - unit test
