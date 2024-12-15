@@ -8,7 +8,7 @@ tags:
 - tests
 - vscode tasks
 - devcontainer
-image: /assets/graphics/2024-12-17-automatic-tests-code-coverage/thumbnail-code-coverage-veiled.png
+image: /assets/graphics/2024-12-14-automatic-tests-code-coverage/thumbnail-code-coverage-veiled.png
 pin: false
 ---
 
