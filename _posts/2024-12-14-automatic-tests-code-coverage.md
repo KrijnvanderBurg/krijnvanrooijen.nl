@@ -114,4 +114,3 @@ By integrating coverage data directly into the IDE, Coverage Gutters eliminates 
 Both methods of generating a coverage can be combined into an effortless setup. The Python extension handles quick, manual test runs via the UI, while VSCode tasks ensure automated coverage generation during events like opening a project. This makes sure that coverage data is always fresh with minimal effort.
 
 With coverage.xml in place, the Coverage Gutters extension displays color-coded highlights directly in the editor, showing exactly which lines are covered and which aren’t. Updates happen in real time as the file changes—no need to parse XML or rely on external tools. This setup eliminates friction, keeps coverage visible, and ensures consistent testing practices throughout development.
-

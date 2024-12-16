@@ -1,15 +1,7 @@
 ---
 title: "[DRAFT] Stop testing your source code, start testing your published package."
-date: 2025-01-10
-excerpt: ""
-tags:
-- python
-- poetry
-- pip
-# image: /assets/graphics/2024-12-17-automatic-tests-code-coverage/thumbnail-code-coverage-veiled.png
-pin: false
+date: 2099-01-01
 ---
-
 
 ## The Fata Morgana of Source Code vs. Packaged Application
 
