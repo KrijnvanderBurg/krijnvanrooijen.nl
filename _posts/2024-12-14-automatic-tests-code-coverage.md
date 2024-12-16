@@ -109,7 +109,7 @@ However, the extension doesn’t start watching for coverage files automatically
 By integrating coverage data directly into the IDE, Coverage Gutters eliminates the need for external tools and encourages better testing practices. Developers can focus on addressing gaps in coverage without disruptions, making it an essential addition to any efficient workflow.
 
 
-## Streamlining Coverage for Continuous Improvement
+## Coverage as Continuous Improvement
 
 Both methods of generating a coverage can be combined into an effortless setup. The Python extension handles quick, manual test runs via the UI, while VSCode tasks ensure automated coverage generation during events like opening a project. This makes sure that coverage data is always fresh with minimal effort.
 
