@@ -1,7 +1,7 @@
 ---
-title: "[DRAFT] Automatically Generate and Visualize Python Code Coverage in VSCode"
-date: 2024-12-11
-excerpt: "Learn how I automated my Python code coverage in VSCode! Instantly visualize coverage data in the editor for faster, more efficient development."
+title: "Automatically Generate and Visualize Python Code Coverage in VSCode"
+date: 2024-12-16
+excerpt: "How to automate code coverage and visualize results directly in VSCode for Python, improve your tests with real-time coverage insights."
 tags:
 - code coverage
 - pytest
