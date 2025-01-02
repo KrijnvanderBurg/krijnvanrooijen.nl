@@ -104,7 +104,44 @@ Key features of Coverage Gutters include:
 - **Watch Mode**: Tracks changes to coverage files and updates the editor in real time.
 - **Report Previews**: Displays HTML summaries of coverage reports within the IDE.
 
-However, the extension doesn’t start watching for coverage files automatically. After opening a project, use the Command Palette or the “Watch” button in the bottom bar of VSCode to activate watch mode. Once enabled, the coverage display updates whenever the coverage.xml file changes.
+However, the extension doesn’t start watching for coverage files automatically by itself. After opening a project, use the Command Palette or the “Watch” button in the bottom bar of VSCode to activate watch mode. Or trigger the `watch` command via a VSCode task, which has a `dependsOn` the pytest coverage task. Once enabled, the coverage display updates whenever the coverage.xml file changes. 
+```json
+"tasks": {
+    // https://code.visualstudio.com/docs/editor/tasks#vscode
+    "version": "2.0.0",
+    {
+        "label": "pytest coverage",
+        "type": "shell",
+        "command": "pytest",
+        "args": [
+            "./src/",
+            "./tests/",
+            "--cov=./",
+            "--cov-report=xml:./coverage.xml",
+            "--cov-config=../.tools/.coveragerc"
+        ],
+        "dependsOn": [
+            "Poetry Install"
+        ],
+        "runOptions": {
+            "runOn": "folderOpen"
+        }
+    },
+    {
+        "label": "coverage-gutters watch",
+        "dependsOn": [
+            "pytest and coverage"
+        ],
+        "presentation": {
+            "reveal": "never"
+        },
+        "command": [
+            "${command:coverage-gutters.watchCoverageAndVisibleEditors}"
+        ],
+        "problemMatcher": []
+    },
+}
+```
 
 By integrating coverage data directly into the IDE, Coverage Gutters eliminates the need for external tools and encourages better testing practices. Developers can focus on addressing gaps in coverage without disruptions, making it an essential addition to any efficient workflow.
 
