@@ -48,8 +48,8 @@ Despite the flexibility of version ranges, both pip and Poetry workflows often r
 
 This gap between development and user experiences can lead to subtle bugs or regressions. For example, a package may specify `pandas>=1.3,<2.0`, but during development, the `poetry.lock` file might pin `pandas` to version `1.4.3`, which works perfectly in tests. However, when a user installs the package months later, they may get `pandas 1.5.3`, which could introduce a bug that wasn’t present during development.
 
-### Why Version Pinning is Problematic
-Pinning dependency versions is crucial for reproducibility, especially in team settings. It ensures everyone works with the same versions, avoiding surprises from unexpected updates. However, this approach can also conceal issues that users might face when ther installation resolved to different dependencies.
+### Why Version Locking is Problematic
+Locking dependency versions is crucial for reproducibility, especially in team settings. It ensures everyone works with the same versions, avoiding surprises from unexpected updates. However, this approach can also conceal issues that users might face when ther installation resolved to different dependencies.
 
 To address this, one possible solution is to test against multiple dependency versions. Tools like Tox and Nox allow developers to define test matrices for different Python versions and dependency versions. However, to test a Cartesian product of all dependency version combinations quickly becomes unworkable. Therefore, exhaustive testing is not a feasible solution.
 
