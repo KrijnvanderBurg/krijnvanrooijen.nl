@@ -13,11 +13,11 @@ tags:
 image: /assets/graphics/2024-12-15-why-i-stopped-using-dependency-managers/thumbnail-book-as-bookcase.png
 pin: false
 ---
-Every application with dependencies exists in two worlds: the strictly controlled stability of a developer’s environment, and the unpredictable dependency landscape of a user’s installation. This disconnect is especially pronounced in ecosystems like Python, where no single standardized toolset exists, and developers must navigate a fluid, evolving ecosystem with varying standards and tools.
+Every application with dependencies exists in two worlds: the strictly controlled stability of a developer’s environment, and the unpredictable dependency landscape of a user’s installation. This disconnect is especially pronounced in ecosystems like Python, where no single standardized toolset exists, and developers must navigate an ever-evolving landscape of varying standards and tools.
 
-To ensure stability and reproducibility, developers traditionally lock dependency versions during development. For example, in Python, this might involve using a `poetry.lock` file with pinned versions pushed to `git`. While this guarantees consistency within the development team, it creates a critical blind spot: developers are shielded from the real-world challenges users face when installing the application. Users encounter dynamically resolved dependencies, influenced by version ranges and what’s available at the time of installation—including newer releases or versions that developers may never have tested.
+To ensure stability and reproducibility, developers traditionally lock dependency versions during development. For example, in Python, this might involve using a `poetry.lock` file with pinned versions pushed to git. While this guarantees consistency within the development team, it creates a critical blind spot: developers are shielded from the real-world challenges users face when installing the application. Users encounter dynamically resolved dependencies, influenced by version ranges and what’s available at the time of installation—including newer releases or versions that developers may never have tested.
 
-This article challenges the current approach to installing dependencies. While locking dependencies ensures stability in development, it doesn’t reflect the real-world experience of users. Is this the right approach, or is it time for a shift in how we manage dependencies?
+This article challenges the current standard approach to installing dependencies. While locking dependencies ensures stability in development, it doesn’t reflect the real-world experience of users. Is this the right approach, or is it time for a shift in how we install dependencies?
 
 ### The Established approach in Python
 Python’s package management typically relies on tools like pip and Poetry, which aim to manage dependencies and ensure reproducibility. However, in practice, only one resolved set of dependency versions is tested during development—regardless of whether version ranges are specified.
@@ -43,7 +43,7 @@ pandas = ">=1.3.0,<2.0.0"
 ```
 {: file='pyproject.toml' }
 
-The `poetry.lock` is pushed to git and shared across the team. This ensures all developers work with the same versions and avoid inconsistencies. Meainig,, only the locked versions are tested unless dependencies are explicitly updated or the lock file is recreated.
+The `poetry.lock` is pushed to git and shared across the team. This ensures all developers work with the same versions and avoid inconsistencies. Meaning, only the locked versions are tested unless dependencies are explicitly updated or the lock file is recreated.
 
 ## The Real-World Challenge
 Despite the flexibility of version ranges, both pip and Poetry workflows often result in developers testing only one resolved set of dependency versions during development. This leaves little understanding of how different combinations of dependencies might behave in real-world scenarios when users install the application.
@@ -69,24 +69,8 @@ For more on automating local development environments, check out my previous art
 "tasks": {
     // https://code.visualstudio.com/docs/editor/tasks#vscode
     "version": "2.0.0",
-    "options": {
-        "env": {
-            "PYTEST_ADDOPTS": "-vv --tb=native"
-        }
-    },
+    "options": {},
     "tasks": [
-        {
-            "label": "setup",
-            "dependsOn": [
-                "build package",
-                "install package"
-            ],
-            "dependsOrder": "sequence",
-            "runOptions": {
-                "runOn": "folderOpen"
-            },
-            "problemMatcher": []
-        },
         {
             "label": "build package",
             "type": "shell",
@@ -96,7 +80,7 @@ For more on automating local development environments, check out my previous art
                 "--output",
                 "./dist/"
             ],
-            "group": "install",
+            "group": "build",
             "presentation": {
                 "showReuseMessage": false
             },
@@ -116,7 +100,7 @@ For more on automating local development environments, check out my previous art
             "presentation": {
                 "panel": "shared"
             },
-            "group": "install",
+            "group": "build",
             "problemMatcher": []
         }
     ]
@@ -124,4 +108,4 @@ For more on automating local development environments, check out my previous art
 ```
 
 ## My thoughts in summary
-Traditional workflows lock dependency versions to ensure stability during development, but this approach does not reflect the user’s experience when they install the software. By packaging and installing my own application locally, I can identify issues that might otherwise go unnoticed. With automation tools like VSCode tasks, this process becomes effortless and helps simulate the actual user experience.
+Traditional workflows lock dependency versions to ensure stability during development, but this approach does not reflect the user’s experience when they install the package. By packaging and installing my own application locally, I can identify issues that might otherwise go unnoticed. With automation tools like VSCode tasks, this process becomes effortless and helps simulate the actual user experience.
