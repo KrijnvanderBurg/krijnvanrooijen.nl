@@ -51,7 +51,7 @@ This gap between development and user experiences can lead to subtle bugs or reg
 ### Why Version Pinning is Problematic
 Pinning dependency versions is crucial for reproducibility, especially in team settings. It ensures everyone works with the same versions, avoiding surprises from unexpected updates. However, this approach can also conceal issues that users might face when ther installation resolved to different dependencies.
 
-To address this, one possible solution is to test against multiple dependency versions. Tools like Tox and Nox allow developers to define test matrices for different Python versions and dependency versions. However, testing all combinations quickly becomes infeasible. The Cartesian product, an explosion of possibilities, makes testing impractical or even impossible considering testing performance. Therefore, exhaustive testing is not a feasible solution.
+To address this, one possible solution is to test against multiple dependency versions. Tools like Tox and Nox allow developers to define test matrices for different Python versions and dependency versions. However, to test a Cartesian product of all dependency version combinations quickly becomes unworkable. Therefore, exhaustive testing is not a feasible solution.
 
 ## A Practical Shift: Install your own package
 To address these issues, I have adapted my workflow to better reflect the user experience. Instead of simply installing dependencies, I package my application (in this case, for Python) into a `.whl` file locally. I then install this wheel using pip, which installs the dependencies just like a user would. This approach mirrors the way users will interact with the application, allowing me to identify issues that might otherwise go unnoticed in a purely development environment. If I don't experience any dependency issues, but my colleague who does, then that is a success.
@@ -59,7 +59,7 @@ To address these issues, I have adapted my workflow to better reflect the user e
 But this isn’t a practical workflow for everyday development. You can’t expect developers to constantly package and install their application manually every time they want to run tests. This is where automation comes into play. In a previous article, I discussed how to automate your local development environment to reduce manual commands. I have built upon this automation and have mimiced my user experience, effortlessly.
 
 ### Automating with VSCode Tasks
-Below is a sample VSCode task configuration that automates the process of dependency installation and testing, while also incorporating the packaging step. These VSCode tasks can be integrated into a devcontainer to standardize the workflow for your entire team.
+Below is a sample VSCode task configuration that automates the process of dependency installation and testing, while also incorporating the packaging step. These VSCode tasks can be integrated into a devcontainer to standardize the workflow for your entire team. Use a venv to install the package into or the local environment may have multiple versions of your package, making it unclear which one is used.
 
 For more on automating local development environments, check out my previous articles such as: *[DevContainers Mastered: Automating Manual Workflows with VSCode Tasks](https://medium.com/@krijnvanderburg/how-i-automate-my-entire-ide-vscode-akin-to-cicd-992568ee7fb5)*.
 
