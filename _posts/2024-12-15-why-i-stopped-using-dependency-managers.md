@@ -1,5 +1,5 @@
 ---
-title: "[DRAFT] Why I stopped using dependency managers"
+title: "Why I Stopped Using Dependency Managers (They Hide User Install Risks)"
 date: 2024-12-24
 excerpt: "Understanding why dependency tools like Poetry and Pip may not miss real-world issues, and how building and installing your own package can reveal hidden issues."
 tags:
