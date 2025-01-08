@@ -76,7 +76,8 @@ For more on automating local development environments, check out my previous art
             "args": [
                 "build",
                 "--output",
-                "./dist/"
+                "./dist/",
+                "--force-reinstall"
             ],
             "group": "build",
             "presentation": {
