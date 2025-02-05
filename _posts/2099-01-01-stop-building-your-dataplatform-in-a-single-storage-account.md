@@ -1,6 +1,6 @@
 ---
 title: "[DRAFT] Stop building your data platform in a single storage account"
-date: 2099-01-01
+date: 2025-02-05
 ---
 # Stop Building Your Data Platform in a Single Storage Account
 
