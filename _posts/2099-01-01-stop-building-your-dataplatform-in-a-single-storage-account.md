@@ -12,7 +12,7 @@ Certain settings, such as redundancy levels, can only be configured at the Stora
 
 ### Raw Data: Most Critical
 
-The Raw data layer contains the original, foundational data, and as long as the rebuild processes for subsequent layers are idempotent, everything else can be recreated from the Raw layer. **Losing Raw data would be catastrophic** because it may be difficult or impossible to rebuild quickly, making it the highest priority for redundancy. This is why Geo-Redundant Storage (GRS) is a strong choice for Raw data, ensuring it remains available across regions in case of catastrophic failures.
+The Raw data layer contains the original, foundational data, and as long as the rebuild processes for subsequent layers are idempotent, everything else can be recreated from the Raw layer. **Losing Raw data would be catastrophic** because it may be difficult or impossible to rebuild quickly, making it the highest priority for redundancy. This is why Geo-Redundant Storage (GRS) is a strong choice for Raw data, guaranteeing the original data is preserved in any disaster recovery situation.
 
 ### Silver and Bronze Data: Lower Usage, Lower Redundancy
 
@@ -20,11 +20,11 @@ Silver and Bronze data are less critical than Raw data. **These layers can be re
 
 ### Gold Data: Ensure Business Continuity
 
-The Gold data layer can of course then also be rebuilt, however, this layer is usually actively consumed by end-users and critical for business operations. While it can be rebuilt from Raw data if necessary, doing so is disruption of data availability. **The business disruption could be considerable**, for example in the case of a power outage at the data centre. Zone-Redundant Storage (ZRS) ensures Gold data remains available within a region, protecting against localized failures and minimizing downtime while not overpaying.
+The Gold data layer can of course then also be rebuilt, however, this layer is usually actively consumed by end-users and critical for business operations. While it can be rebuilt from Raw data if necessary, doing so is disruption of data availability. **The business disruption could be considerable**, for example in the case of a power outage at the data centre. Zone-Redundant Storage (ZRS) ensures Gold data remains available within a region, protecting against localized data centre failures and minimizing downtime while not overpaying.
 
 ## Cost-Effectiveness as a by-product
 
-By splitting your data into separate storage accounts based on redundancy needs, you gain fine-grained control over costs. Instead of applying expensive redundancy to all data, you can selectively optimize spending based on criticality. The Raw data layer, which requires high redundancy for disaster recovery, and Gold data, which demands high availability, can be allocated to more expensive redundancy options. On the other hand, Silver and Bronze layers, which are less sensitive to immediate availability, can be stored with lower-cost redundancy. This results in significant long-term cost savings without sacrificing reliability.
+By splitting your data into separate storage accounts based on redundancy needs, you gain fine-grained control over costs. Instead of applying expensive redundancy to all data, you can selectively optimize spending based on criticality. The Raw data layer, which requires high redundancy for disaster recovery, and Gold data, which demands high availability, can be allocated to more expensive redundancy options. While Silver and Bronze layers can be stored with lower-cost redundancy. This results in significant long-term cost savings without sacrificing reliability.
 
 ## Limiting the Blast Radius
 
@@ -34,7 +34,7 @@ However, due to an unnoticed bug—say, the incorrect file path or merge logic�
 
 If your sources were isolated into separate containers, the blast radius of an error would be contained within that specific container. If something goes wrong with _source A_, it wouldn’t impact _source B_ or other layers. This simple architectural decision enhances resilience by making errors easier to isolate.
 
-**Soft-delete** can offer some protection against accidental deletions or corruption. However, soft-delete only works if you actively notice the issue within the retention period. Without proper monitoring or alerting, an unnoticed bug could cause gradual, subtle changes that go undetected until it’s too late.
+Soft-delete can offer some protection against accidental deletions or corruption. However, soft-delete has no proper monitoring and alerting and thus only works if you actively notice the issue within the retention period. An unnoticed bug could cause gradual, subtle changes that go undetected until it’s too late.
 
 By isolating data into distinct containers (or storage accounts), you not only limit the potential spread of errors but also improve your ability to detect and address issues before they escalate.
 
