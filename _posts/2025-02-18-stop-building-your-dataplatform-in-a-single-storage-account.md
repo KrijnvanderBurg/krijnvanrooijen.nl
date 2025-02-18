@@ -1,7 +1,7 @@
 ---
 title: "Rethinking Data Platforms: The Limits of Single Storage Architecture"
-date: 2025-02-13
-excerpt: "Relying on one storage account may seem simple, but it increases risk and cost. Learn how a multi-layered approach improves efficiency and security."
+date: 2025-02-18
+excerpt: "Data platforms built on a single storage account raise risk and cost. Learn how a multi-layered approach boosts efficiency and security."
 tags:
 - Data Platform
 - Architecture
@@ -58,14 +58,14 @@ Microsoft Fabric introduces the concept of OneLake, which promotes a unified sto
 
 ## In Summary
 
-Stop putting all your eggs in a single storage basket. The traditional approach of placing everything in a single storage account might seem simpler at first, but it introduces significant risks in terms of security, cost, and data recovery. Modern data architectures must prioritize resilience, efficiency, and scalability—none of which are served by a single storage account strategy.
+Stop putting all your eggs in a single storage basket. The traditional approach of placing everything in a single storage account might seem simpler at first, but it introduces risks in terms of configuration flexibility, costs, and data integrity. Modern data architectures must prioritize resilience, efficiency, and scalability - none of which are served by a single storage account strategy.
 
 By splitting your data into multiple storage accounts, you not only ensure better protection against potential disasters, but you also gain flexibility in terms of redundancy, cost management, and lifecycle management.
 
 To make this transition:
 
 1. **Align redundancy and performance needs**: Choose redundancy strategies (**LRS, ZRS, GRS**) based on the criticality of each data layer.
-2. **Audit your current data platform**: Determine which data can be isolated into separate containers based on its value and recovery requirements.
+2. **Audit your data separation**: Determine which data can be isolated into separate containers based on its value and recovery requirements.
 3. **Implement proper governance**: Set up the right access control and monitoring systems, ensuring each storage account is secure and well-maintained.
 
 I argue that a multi-account approach enhances security while also optimizing costs, allowing for more sustained growth.

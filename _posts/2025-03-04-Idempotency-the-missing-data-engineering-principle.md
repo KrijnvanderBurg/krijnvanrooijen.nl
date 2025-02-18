@@ -1,6 +1,6 @@
 ---
 title: "Idempotency: the missing data engineering principle"
-date: 2099-01-01
+date: 2025-03-04
 excerpt: ""
 tags:
 - Data Engineering
@@ -130,24 +130,17 @@ Final Thoughts: Building a Truly Resilient Data Platform
 Designing your data pipelines for idempotency and self-healing ensures they are fault-tolerant, self-recovering, and optimized for growth. If your pipelines can’t recover on their own, you’re building a house of cards. Make it self-healing. Make it idempotent. Or be ready to spend your nights debugging broken data.
 
 
-
-Part 1: Why Idempotency Matters – The Case for Self-Healing Pipelines
-
-(Current article, with minor refinements for introduction to the series)
-
     The pain of non-idempotent data pipelines.
     How failure manifests in real-world ingestion pipelines.
     The core concept of idempotency in data engineering.
     Introduction to self-healing mechanisms.
 
-Part 2: Designing an Idempotent Ingestion Layer
 
     Best practices for storing raw data before processing.
     Versioning and partitioning strategies to ensure re-runs are clean.
     How to use Delta Lake, Iceberg, or Hudi for reliable ingestion.
     Example implementation with Spark/Delta.
 
-Part 5: Event-Driven Pipelines for Self-Healing
 
     Using event triggers instead of cron-based scheduling.
     How Kafka or cloud-native event buses can enable automatic reprocessing.
