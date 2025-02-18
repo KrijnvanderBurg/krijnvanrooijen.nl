@@ -4,7 +4,7 @@ date: 2025-02-18
 excerpt: ""
 tags:
 - Data Engineering
-image: /assets/graphics/x.png
+# image: /assets/graphics/x.png
 pin: false
 ---
 In today's data-driven world, data pipelines are essential for moving, processing, and transforming data from various sources to destinations. They ensure that data flows smoothly and consistently, enabling organizations to gain valuable insights and make informed decisions. These pipelines are the backbone of modern data infrastructure, helping to automate data workflows and improve efficiency.

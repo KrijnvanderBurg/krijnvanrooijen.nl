@@ -6,7 +6,7 @@ tags:
 - Data Platform
 - Architecture
 - Cost Cutting
-image: /assets/graphics/2025-02-13-stop-building-dataplatform-in-single-resource/thumbnail-medallion-eggs-in-broken-basket.png
+image: /assets/graphics/2025-02-18-stop-building-dataplatform-in-single-resource/thumbnail-medallion-eggs-in-broken-basket.png
 pin: false
 ---
 

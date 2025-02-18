@@ -6,9 +6,9 @@ icon: fas fa-fw fa-microphone
 
 ## 2025
 
-### Multi-domain data platforms
+### Office takeover: Multi-domain data platforms
 
-![data-platforms](/assets/graphics/speaking/2025-01-28-krijn-presenting-data-platforms.jpg){: .w-50 .right .shadow .rounded-10}
+![data-platforms](/assets/graphics/speaking/failed.png){: .w-50 .right .shadow .rounded-10}
 
 I gave a deep-dive walkthrough on setting up a multi-workspace Databricks environment with centralized web authentication, focusing on secure access management. The main goal was to completely restrict public access across all workspaces.<br><br><br>
 
@@ -16,10 +16,10 @@ I gave a deep-dive walkthrough on setting up a multi-workspace Databricks enviro
 
 ## 2024
 
-### DevContainers: the ideal team development environment 
+### Haven dagen: DevContainers, the ideal team dev environment 
 
 ![devcontainers](/assets/graphics/speaking/2024-12-02-krijn-at-HbR-presenting-devcontainers.jpg){: .w-50 .left .shadow .rounded-10}
-Showcasing DevContainers to the department; how to create a simple, reproducible development environment. I also covered the use of code quality tools, both locally and in the CI/CD pipeline, to ensure consistent quality across the codebase. My focus was on explaining how these tools could help safeguard and maintain standards during development.<br><br><br>
+Showcasing DevContainers to the department; how to create a simple, reproducible development environment. I also covered the use of code quality tools, both locally and in the CI/CD pipeline, to ensure consistent quality across the codebase. My focus was on explaining how these tools could help safeguard and maintain standards during development.<br><br>
 
 ---
 
@@ -31,7 +31,7 @@ I demonstrated how seemingly simple code can quickly become complex and unmanage
 
 ---
 
-### Bi-weekly knowledge sharing presentations
+### Bi-weekly presentations: data engineering and azure fundamentals
 
 ![ABN-AMRO](/assets/graphics/speaking/2024-08-12-krijn-at-ABN-presenting-object-oriented.jpg){: .w-50 .left .shadow .rounded-10}
 
