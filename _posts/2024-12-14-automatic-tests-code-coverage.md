@@ -1,5 +1,5 @@
 ---
-title: "Automatically Generate and Visualize Python Code Coverage in VSCode"
+title: "Automate Code Coverage in VSCode: A Python guide"
 date: 2024-12-16
 excerpt: "How to automate code coverage and visualize results directly in VSCode for Python, improve your tests with real-time coverage insights."
 tags:

@@ -1,5 +1,5 @@
 ---
-title: "How to enforce Code Quality standards using CI/CD"
+title: "How to enforce Code Quality standards using Azure Pipelines"
 date: 2024-12-11
 excerpt: "Learn how to enforce code quality standards with CI/CD pipelines for tools like Ruff, ensuring consistency and security in your software development."
 tags:

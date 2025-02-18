@@ -6,7 +6,7 @@ icon: fas fa-fw fa-microphone
 
 ## 2025
 
-### Office takeover: Multi-domain data platforms
+### Office takeover: Multi-Databricks workspaces
 
 ![data-platforms](/assets/graphics/speaking/failed.png){: .w-50 .right .shadow .rounded-10}
 
