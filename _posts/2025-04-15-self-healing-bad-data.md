@@ -7,28 +7,40 @@ tags:
 - Data Platform
 image: /assets/graphics/2025-04-15-self-healing-bad-data/thumbnail-self-healing-bad-data.png
 pin: false
+
+In this article, we'll walk through how to build a PySpark pipeline that:
+- Sends bad records to a bad queue
+- Reprocesses that queue automatically over time
+- Keeps bad records for future testing and debugging
 ---
-When working with data pipelines, one common challenge is dealing with records that can't be processed due to issues like schema mismatches or data quality problems. In these cases, it’s important to ensure that the pipeline doesn't break but continues to process valid records while also not discarding the bad data as data loss is worse than malformed data.
+Data pipelines often encounter records that can't be processed due to issues like schema mismatches or data quality problems. It's essential to ensure that the pipeline doesn't fail when faced with these records, but continues processing valid data while also handling bad records appropriately. Bad data should not be discarded, as data loss is often worse than dealing with bad data.
 
-In this article, we'll cover how to set up a Pyspark pipeline to handle bad data, including automating the (retrying or reprocessing? which word to use) of the bad data and and keeping track of bad records for future testing and debugging.
+This article discusses how to configure a PySpark pipeline to handle bad data, automate the reprocessing of failed records, and keep a history of bad records for future testing and debugging.
 
-All code provided is for short example purposes and might miss certain steps to make it function properly.
+# **1. Separating Bad Data**
 
-# 1: Separate the bad data
+The first step in dealing with unprocessable records is to isolate them, ensuring that the pipeline processes valid data without disruption. Records that cannot be processed due to schema mismatches or data quality issues should be written to a separate location. This allows the pipeline to keep running now and on next runs while the problematic records are isolated for further investigation or reprocessing.
 
-The first step is to define how records that fail processing (due to schema issues or other problems) will be written to a bad queue. This ensures that these records are isolated, allowing the pipeline to continue without interruptions. The bad table is essentially a holding area for records that need further investigation or reprocessing, usually the pipeline must be updated to handle the bad data to process it still.
+**Example: Writing to a Separate Location for Bad Data**
 
-Example: Writing to the bad Queue
+1. The pipeline applies a schema when reading the data, which ensures that the data matches the expected structure.
+
+2. Any records that don't match the schema are captured in a special column, `_corrupt_record`.
+
+3. Bad data is filtered by checking if the column `_corrupt_record` contains data, if its null then the schema matches.
+
+4. The remaining valid data is separated from the corrupted records using the exceptAll function to ensure no overlap.
+
+5. Finally, valid records are written to a destination table, while bad records are written to a separate table.
 
 ```python
-# Read the CSV with permissive mode to allow corrupt records and put them in _corrupt_record
+# Read the CSV with permissive mode to allow corrupt records into _corrupt_record
 df = spark.read.option("mode", "PERMISSIVE").schema(schema).csv("/mnt/bronze/data_source/csv_file.csv")
 
-# Add all corrupt records to a separate dataframe
+# Isolate the bad data into a separate dataframe
 bad_df = df.filter(df["_corrupt_record"].isNotNull())
 
-# Use exceptAll to ensure no overlap between valid and invalid data
-# exceptAll guarantees no duplicates even when adding more bad data checks
+# Use exceptAll to avoid duplicates when adding new bad records
 df = df.exceptAll(bad_df)
 
 # Write valid and invalid data to separate tables
@@ -36,51 +48,51 @@ df.write.format("parquet").save("/mnt/silver/<table_name>")
 bad_df.write.format("parquet").save("/mnt/bronze/<table_name>_bad")
 ```
 
-In the code above, any records with incorrect schema are writting to a separate bad table in the same layer, while valid records
+❓ What happens when bad data never becomes valid? It remains in the bad data table. Alerts can be set for volume growth, and metadata can be used to tag common failure reasons. Eventually, old data can be archived while ensuring that valid data continues flowing.
 
-# 2: Automating bad data reprocessing
+# 2. Automating Bad Data Reprocessing
 
-Each time the pipeline runs, it should not only process new incoming data but also check the bad queue to see if any previously failed records can now be processed. This ensures that records stuck in the bad queue are continuously re-evaluated and integrated into the main pipeline when possible. By integrating it in the existing pipeline for incoming data we also prevent creating multiple processes to run and maintain, its combined in a single robust pipeline.
+With each pipeline run, not only should new incoming data be processed, but the bad data should also be checked to see if it can now be processed. This ensures that records that previously failed are re-evaluated and reprocessed when possible, preventing them from accumulating indefinitely. While this approach does make the pipeline more complex, it is preferable to creating a new pipeline with the same ETL logic for processing previous bad data. When the pipeline is updated to fix or accomodate the bad data is automatically picked up on the next run rather than requiring some other pipeline to fix it.
 
-The key here is to read both the incoming data and the bad queue in the same read operation. This eliminates the need for separate data frames and simplifies the process.
+Example: Reading from Multiple Sources in One Call
+1. Read both new incoming data and previously failed records.
 
-Example: Reading from Multiple Locations in One Call
+2. The union function merges the two datasets (incoming and previous bad data) as dataframe, and the same filtering and separation logic is applied to extract the bad data.
+
+3. The pipeline writes valid data to the silver layer, appending it, and writes the remaining bad data back to the bad data table in the bronze layer, overwriting the previous contents.
 
 ```python
 df = spark.read.option("mode", "PERMISSIVE").schema(schema).csv("/mnt/bronze/data_source/csv_file.csv")
-bad_df = spark.read.format("delta").load("/mnt/bronze/<table_name>_bad") # you still need to process the read _corrupt_record column into a dataframe thats exactly like the read incoming csv.
-df = df.union(bad_df) # read both incoming data and previous runs bad data
+bad_df = spark.read.format("delta").load("/mnt/bronze/<table_name>_bad")  # Process _corrupt_record column for consistency
+df = df.union(bad_df)  # Merge both incoming data and previously failed data
 
 bad_df = df.filter(df["_corrupt_record"].isNotNull())
 df = df.exceptAll(bad_df)
 
-df.write.format("parquet").mode("append").save("/mnt/silver/<table_name>")            # mode append to next layer silver
-bad_df.write.format("parquet").mode("overwrite").save("/mnt/bronze/<table_name>_bad") # mode overwrite bad in bronze
+df.write.format("parquet").mode("append").save("/mnt/silver/<table_name>")           # Append valid data to the silver layer
+bad_df.write.format("parquet").mode("overwrite").save("/mnt/bronze/<table_name>_bad") # Overwrite bad data in the bronze layer
 ```
 
-In this example, the pipeline reads data from both the incoming data directory and the bad queue in a single operation. Records that pass validation (age is not null) are processed normally, while invalid records are left in the bad queue to be handled later.
+# 3. Storing Bad Records for Testing
 
-The bad table serves an essential function by isolating records that cannot be processed, but it's crucial to ensure that the pipeline doesn’t get stuck with unprocessable data. On every run, the pipeline should attempt to process any records in the bad queue that can now be valid.
+Retaining bad data is essential for testing the pipeline, it must be able to process all previously processed data. If for whatever reason the data must be processed anew from the original source then you want to be sure it can process everything it previously could.
 
-This approach guarantees that every time the pipeline runs, it checks the bad queue along with the new incoming data. If any bad records can now be processed, they are reintegrated into the pipeline, ensuring that previously failed records don’t pile up unnecessarily.
+A key limitation of relying exclusively on the bad data table is that once problematic records are processed correctly, they are removed from the table, meaning there's no longer a history of bad data for testing purposes. This makes it necessary to store bad records separately for later use in CI/CD pipelines or manual testing.
 
-# 3: Keeping all bad records for Testing
+One approach is to create a test table to serve as a historical archive of all bad records. This ensures that even if the records are later processed successfully, a history of those failures is preserved for debugging and testing. This can be done by adding another write of bad data to the test table but in append mode with deduplication. Or alternatively, using Change Data Feed (CDF) in Databricks can help track changes made to the bad table, ensuring that deleted records are still available in a log for future testing. This 
 
-To improve testing and debugging, it’s essential to retain records that couldn't be processed, so you can simulate reprocessing them during manual testing or CI/CD processes. One way would be to, as a test, process all of the data but this could take long or be costly in terms of compute or if records were updated or altered from bad to good then there is no bad data anymore. So we want to keep all the bad data to test against, perhaps in cicd, when the pipeline is updated to make sure it can still handle edge cases by replaying problematic records.
-
-A good way to store these records for later is by creating a `<table_name>_test` table, which serves as a historical archive of all failed or malformed records. You can later use this table to simulate how the pipeline would handle bads if the schema or data quality issues are resolved.
-
-There are two ways of doing this. When encountering bad records in the pipeline they can be written to both a bad table and a test table, the bad table would be overwritten but the test table would be appending with deduplication. However, depending on the size and number of bad data this test table could become quite large, reading it all, dedplicating and writing deduplicated back could be a considerable part of the pipeline execution time while it only serves for testing purposes.
-
-Or in databricks we can leverage Change Data Feed, CDF, which when enabled maintains a log of all inserts, updates and deletes on a table. This way if we reprocess and thus delete bad records theyre still in the logs and can be retrieved and stored in another table for maintaining history.
-
-First enable change data feed on the table storing bad data as a queue
+Enabling Change Data Feed on the Bad Data Table
 
 ```sql
 ALTER TABLE source_table SET TBLPROPERTIES (delta.enableChangeDataFeed = true)
 ```
 
-Example: Storing bad Records for Testing.
+Example: Storing Bad Records for Testing
+1. The CDF feature is enabled on the bad data table to track inserts, updates, and deletions.
+
+2. When bad records are processed, they are deleted from the bad data table, but CDF ensures that the history of these records is still available in the logs.
+
+3. The records that were inserted (and later processed) are written to a separate test table (<table_name>_test), preserving a history of all bad data for future testing, debugging, and CI/CD validation.
 
 ```python
 # Read only inserted rows from the change data feed
@@ -88,19 +100,16 @@ inserts_df = (
     spark.read
     .format("delta")
     .option("readChangeFeed", "true")
-    .option("startingVersion", 0)  # starting version is crucial, 0 is always the entire feed from the beginning. Either thats okay or you have to track the version yourself somehow.
+    .option("startingVersion", 0)  # Start from the beginning to capture all inserts
     .table("/mnt/bronze/<table_name>_bad")
-    .filter("_change_type = 'insert'") <- improve this filter with a column and such, not all string
+    .filter("_change_type = 'insert'")  # Filter for newly inserted bad records
 )
 
 inserts_df.write.format('delta').mode("overwrite").save("/mnt/bronze/<table_name>_test")
 ```
 
-By appending records from the bad queue into a unit_test table, you maintain a centralized collection of all previously problematic data, making it easier to debug and simulate how your pipeline would behave with these records when reprocessed.
-
-
 # Conclusion
 
-Handling bad records is an essential part of building resilient data pipelines. By leveraging PySpark's capabilities, we can automate the process of isolating invalid records in an bad queue, periodically re-checking them for validity, and storing them for future testing. This approach helps maintain the integrity of your pipeline, ensures that data quality issues don't cause unnecessary disruptions, and provides a streamlined way to test and fix bads in the pipeline.
+Handling bad records is a critical part of building resilient data pipelines. By isolating invalid records, automating its reprocessing, and retaining the invalid records for future testing, the integrity of the pipeline is preserved. This approach ensures that data quality issues do not disrupt pipeline operations and provides an effective way to test and fix errors as the pipeline evolves.
 
-With a setup like this, you can build robust data pipelines that handle edge cases effectively, automate bad management, and continuously process valid records, improving your overall workflow efficiency.
+With this setup, pipelines can efficiently process valid data while continuously checking and reprocessing bad data, ensuring the system remains reliable and capable of handling edge cases without unnecessary disruptions.
