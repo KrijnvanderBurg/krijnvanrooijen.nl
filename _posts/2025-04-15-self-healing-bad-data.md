@@ -14,7 +14,7 @@ In this article, we'll walk through how to build a PySpark pipeline that:
 - Reprocesses that queue automatically over time
 - Keeps bad records for future testing and debugging
 ---
-In production environments, bad data is inevitable. Schema mismatches, missing values, and inconsistent formatting can cause failures in data pipelines. However, rather than halting the entire pipeline when these issues arise, the goal is to handle bad data effectively while ensuring the flow of valid data continues uninterrupted. By doing so, we minimize downtime and prevent bottlenecks.
+In production environments, bad data is inevitable. Schema mismatches, missing values, and inconsistent formatting can cause failures in data pipelines. However, rather than halting the entire pipeline when these issues arise, the goal is to handle bad data effectively while ensuring the flow of valid data continues uninterrupted. By effectively managing bad data, pipelines continue to run smoothly, minimizing downtime and bottlenecks.
 
 This article will walk through how to build a self-healing PySpark pipeline that:
 - Isolates and stores bad records for future processing or debugging.
@@ -54,12 +54,12 @@ bad_df.write.format("parquet").save("/mnt/bronze/<table_name>_bad")
 
 ❓ What happens when bad data never becomes valid?
 
-Bad data remains in the bad data table. Alerts can be set for volume growth, and metadata can be used to tag common failure reasons.
+Bad data remains in the bad data table. Alerts can be set to monitor volume growth, and metadata can tag common failure reasons for better visibility.
 
 # 2. Automating Bad Data Reprocessing
 With each pipeline run, not only should new incoming data be processed, but bad data should also be re-evaluated to check if it can now be processed. This ensures that records which previously failed are automatically reprocessed when their underlying issues have been resolved. This approach eliminates the need to create a new pipeline to handle bad data, and updates to the pipeline logic will automatically be applied to previously failed records on the next run.
 
-After bad data has been succesfully reprocessed it is typically removed from the bad data table, this is not included in the example code.
+After bad data has been successfully reprocessed it is typically removed from the bad data table, this is not included in the example code.
 
 **Example: Reading from good and bad from multiple sources**
 1. The pipeline reads both new data and previously failed records.
@@ -91,7 +91,7 @@ Retaining a history of bad records is essential for testing, debugging, and vali
 Once problematic records are successfully processed, they are typically removed from the bad data table. This can lead to the loss of valuable information for testing. To prevent this, bad records should be stored in a separate archive for later use.
 
 **Writing bad data also to an archive location**
-When writing bad data to its separate bad data queue table, also write that same data to another location for archiving. This additional writing must not overwrite but append. However, deduplication is critical as pipelines can fail to reprocess the bad data multiple times, readding the same bad data to the archive. Then next option is more simple.
+When writing bad data to its separate bad data queue table, also write that same data to another location for archiving. This additional writing must not overwrite but append. However, deduplication is critical as pipelines can fail to reprocess the bad data multiple times, re-adding the same bad data to the archive.
 
 **Using Change Data Feed (CDF) to Track Bad Data History**
 
@@ -124,15 +124,15 @@ inserts_df.write.format('delta').mode("overwrite").save("/mnt/bronze/<table_name
 ```
 
 # Conclusion
-Handling bad data is a fundamental aspect of building resilient data pipelines. By isolating invalid records, automating their reprocessing, and retaining them for future testing, data pipeline integrity is preserved. This approach ensures that data quality issues do not cause pipeline disruptions while enabling continuous improvements.
+Handling bad data is a fundamental aspect of building resilient data pipelines. By isolating invalid records, automating their reprocessing, and retaining them for future testing, the integrity of the pipeline is preserved. This approach ensures that data quality issues do not cause pipeline disruptions while enabling continuous improvements.
 
 Additionally, enabling features like CDF for tracking the history of bad data provides a robust framework for debugging, testing, and validating pipeline changes. With this self-healing approach, pipelines are better equipped to handle bad data without unnecessary disruptions, allowing for greater flexibility and reliability.
 
 ## Key Takeaways:
-1. Isolate and Manage Bad Data: Keep bad records separate from valid data to prevent pipeline failures.
+1. **Isolate and Manage Bad Data**: Keep bad records separate from valid data to prevent pipeline failures.
 
-2. Automate Bad Data Reprocessing: Automatically reprocess bad data when underlying issues are fixed, removing the need for manual intervention.
+2. **Automate Bad Data Reprocessing**: Automatically reprocess bad data when underlying issues are fixed, removing the need for manual intervention.
 
-3.  Track Bad Data History: Retain a historical record of bad data using features like CDF to ensure records can be tested and debugged in the future.
+3. **Track Bad Data History**: Retain a historical record of bad data using features like CDF to ensure records can be tested and debugged in the future.
 
 By implementing these practices, data pipelines become more resilient, capable of handling errors efficiently, and can evolve without being derailed by bad data.
