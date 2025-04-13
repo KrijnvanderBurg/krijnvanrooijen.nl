@@ -1,5 +1,5 @@
 ---
-title: "[DRAFT] Building Self-Healing Data Pipelines for Automated Bad Data Handling and Testing"
+title: "Building Self-Healing Data Pipelines for Automated Bad Data Handling and Testing"
 date: 2025-04-13
 excerpt: "Learn how to automate the handling, reprocessing, and testing of bad data in PySpark pipelines, ensuring robust data workflows."
 tags:
