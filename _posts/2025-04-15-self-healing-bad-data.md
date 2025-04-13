@@ -8,11 +8,6 @@ tags:
 - Databricks
 image: /assets/graphics/2025-04-15-self-healing-bad-data/thumbnail-self-healing-bad-data.png
 pin: false
-
-In this article, we'll walk through how to build a PySpark pipeline that:
-- Sends bad records to a bad queue
-- Reprocesses that queue automatically over time
-- Keeps bad records for future testing and debugging
 ---
 In production environments, bad data is inevitable. Schema mismatches, missing values, and inconsistent formatting can cause failures in data pipelines. However, rather than halting the entire pipeline when these issues arise, the goal is to handle bad data effectively while ensuring the flow of valid data continues uninterrupted. By effectively managing bad data, pipelines continue to run smoothly, minimizing downtime and bottlenecks.
 
