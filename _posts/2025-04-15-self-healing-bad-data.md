@@ -6,7 +6,7 @@ tags:
 - Data Engineering
 - Pyspark
 - Databricks
-image: /assets/graphics/2025-04-15-self-healing-bad-data/thumbnail-self-healing-bad-data.png
+image: /assets/graphics/2025-04-15-self-healing-bad-data/thumbnail-self-healing-bad-data.jpg
 pin: false
 ---
 In production environments, bad data is inevitable. Schema mismatches, missing values, and inconsistent formatting can cause failures in data pipelines. However, rather than halting the entire pipeline when these issues arise, the goal is to handle bad data effectively while ensuring the flow of valid data continues uninterrupted. By effectively managing bad data, pipelines continue to run smoothly, minimizing downtime and bottlenecks.
