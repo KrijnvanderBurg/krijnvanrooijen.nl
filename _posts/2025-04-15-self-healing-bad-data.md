@@ -47,7 +47,7 @@ bad_df = df.filter(df["_corrupt_record"].isNotNull())
 # Use exceptAll to avoid duplicates when adding new bad records
 df = df.exceptAll(bad_df)
 
-# Write valid and invalid data to separate tables
+# Write valid and bad data to separate tables
 df.write.format("parquet").save("/mnt/silver/<table_name>")
 bad_df.write.format("parquet").save("/mnt/bronze/<table_name>_bad")
 ```
@@ -59,7 +59,7 @@ Bad data remains in the bad data table. Alerts can be set to monitor volume grow
 # 2. Automating Bad Data Reprocessing
 With each pipeline run, not only should new incoming data be processed, but bad data should also be re-evaluated to check if it can now be processed. This ensures that records which previously failed are automatically reprocessed when their underlying issues have been resolved. This approach eliminates the need to create a new pipeline to handle bad data, and updates to the pipeline logic will automatically be applied to previously failed records on the next run.
 
-After bad data has been successfully reprocessed it is typically removed from the bad data table, this is not included in the example code.
+After bad data has been successfully reprocessed, it is typically removed from the bad data table; this is not included in the example code.
 
 **Example: Reading from good and bad from multiple sources**
 1. The pipeline reads both new data and previously failed records.
@@ -124,7 +124,7 @@ inserts_df.write.format('delta').mode("overwrite").save("/mnt/bronze/<table_name
 ```
 
 # Conclusion
-Handling bad data is a fundamental aspect of building resilient data pipelines. By isolating invalid records, automating their reprocessing, and retaining them for future testing, the integrity of the pipeline is preserved. This approach ensures that data quality issues do not cause pipeline disruptions while enabling continuous improvements.
+Handling bad data is a fundamental aspect of building resilient data pipelines. By isolating bad data, automating their reprocessing, and retaining them for future testing, the integrity of the pipeline is preserved. This approach ensures that data quality issues do not cause pipeline disruptions while enabling continuous improvements.
 
 Additionally, enabling features like CDF for tracking the history of bad data provides a robust framework for debugging, testing, and validating pipeline changes. With this self-healing approach, pipelines are better equipped to handle bad data without unnecessary disruptions, allowing for greater flexibility and reliability.
 
