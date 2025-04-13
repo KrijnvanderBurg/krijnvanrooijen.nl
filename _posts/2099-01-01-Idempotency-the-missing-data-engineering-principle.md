@@ -1,6 +1,6 @@
 ---
 title: "[DRAFT] Idempotent and Self-Healing Data Pipelines in PySpark"
-date: 2025-02-18
+date: 2099-01-01
 excerpt: ""
 tags:
 - Data Engineering

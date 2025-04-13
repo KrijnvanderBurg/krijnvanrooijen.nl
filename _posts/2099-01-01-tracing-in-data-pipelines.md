@@ -1,6 +1,6 @@
 ---
 title: "[DRAFT] Adding OpenTelemetry (OTEL) Tracing to Data Pipelines for Insights and Lineage"
-date: 2025-02-18
+date: 2099-01-01
 excerpt: ""
 tags:
 - Data Engineering
