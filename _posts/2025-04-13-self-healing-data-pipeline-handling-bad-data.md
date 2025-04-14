@@ -1,7 +1,7 @@
 ---
 title: "Self-Healing Data Pipelines: Automatically Handle and Reprocess Bad Data"
 date: 2025-04-13
-excerpt: "Learn how to automate the handling, reprocessing, and testing of bad data in PySpark pipelines, ensuring robust data workflows."
+excerpt: "Learn how to build self-healing data pipelines that handle bad data, automate reprocessing, and retain history for debugging, testing, and reliability."
 tags:
 - Data Engineering
 - Pyspark
