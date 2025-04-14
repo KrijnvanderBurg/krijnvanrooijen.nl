@@ -6,7 +6,7 @@ tags:
 - Data Engineering
 - Pyspark
 - Databricks
-image: /assets/graphics/2025-04-15-self-healing-bad-data/thumbnail-self-healing-bad-data.jpg
+image: /assets/graphics/2025-04-15-self-healing-data-pipeline-handling-bad-data/thumbnail-self-healing-bad-data.jpg
 pin: false
 ---
 Encountering bad data is inevitable. Schema mismatches, missing values, and inconsistent formatting are causes of failures in data pipelines. The question is bad data *frequency*, not *if* it occurs. However, rather than halting the entire pipeline on bad data, the goal is to handle bad data gracefully so the pipeline may process all incoming data By effectively managing bad data, pipelines continue to run uninterrupted, minimizing downtime and issues.
