@@ -90,7 +90,7 @@ When writing bad data to its separate bad data queue table, also write that same
 
 **Using Change Data Feed (CDF) to Track Bad Data History**
 
-Change Data Feed (CDF) is a feature in Databricks that tracks changes in Delta tables, including inserts, updates, and deletions. Enabling CDF ensures that all changes to the bad data table are captured, even when records are deleted or successfully processed. This allows the history of bad data to be retained for future testing and debugging.
+[Change Data Feed](https://docs.databricks.com/aws/en/delta/delta-change-data-feed) (CDF) is a feature in Databricks that tracks changes in Delta tables, including inserts, updates, and deletions. Enabling CDF ensures that all changes to the bad data table are captured, even when records are deleted or successfully processed. This allows the history of bad data to be retained for future testing and debugging.
 
 **Example: Storing Bad Records for Testing with CDF**
 
