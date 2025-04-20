@@ -11,11 +11,13 @@ tags:
 image: /assets/graphics/2025-04-20-local-spark-cluster-devcontainer/thumbnail.jpg
 pin: false
 ---
+
 Data engineering workflows with Apache Spark often involve complex setup procedures, environment configuration, and dependency management. Traditional approaches to creating local Spark development environments frequently lead to "works on my machine" problems, inconsistent behavior across team members' setups, and significant time spent on configuration rather than actual development.
 
-This article presents a solution that creates a complete, production-like Spark cluster locally using a DevContainer with Docker Compose. The setup includes a Spark master, multiple worker nodes, history server, jupyter server, all in a development environment with PySpark and Jupyter notebooks integration - configured automatically and ready to use.
+This article presents a solution that creates a complete, production-like Spark cluster locally using a DevContainer with Docker Compose. The setup includes a Spark master, multiple worker nodes, history server, Jupyter server — all in a development environment with PySpark and Jupyter notebooks integration — configured automatically and ready to use.
 
 ## Why a Local Spark DevContainer?
+
 Setting up a local Spark development environment traditionally involves:
 
 1. Installing compatible versions of Java, Spark, and Python
@@ -24,6 +26,7 @@ Setting up a local Spark development environment traditionally involves:
 4. Troubleshooting inconsistent behavior across machines
 
 By containerizing the entire environment, these challenges are eliminated by automation. The DevContainer approach provides:
+
 - **Consistency**: Every developer works with identical Spark configurations
 - **Zero setup**: The environment builds automatically with a single command
 - **Isolation**: No conflicts with other installed software
@@ -31,42 +34,116 @@ By containerizing the entire environment, these challenges are eliminated by aut
 - **Multi-node testing**: Test distributed operations on multiple worker nodes
 
 ### Not familiar with DevContainers?
+
 Previously I wrote a mini-series on DevContainers, how to create, improve, and optimize standardized development environments for your team. Check out the full series below:
+
 - [DevContainers Introduction: The Ideal Standardized Team Development Environment — Part 1/3](https://krijnvanrooijen.nl/blog/decontainers-the-ideal-team-environment/)
 - [DevContainers Improved: Integrating Code Quality Checks for Continuous Feedback — Part 2/3](https://krijnvanrooijen.nl/blog/devcontainers-add-code-quality-tools/)
 - [DevContainers Mastered: Automating Manual Workflows with VSCode Tasks — Part 3/3](https://krijnvanrooijen.nl/blog/devcontainers-automate-workflow-tasks/)
 
-
 ## DevContainer Architecture
+
 The solution consists of five interconnected Docker containers orchestrated through Docker Compose:
 
 ![Spark Cluster Architecture](/assets/graphics/2025-04-20-local-spark-cluster-devcontainer/design.drawio.png)
 
-1. **DevContainer**: Development environment with Java Spark, PySpark, and Jupyter.
-2. **Spark Master**: Coordination node that manages the cluster resources
-3. **Spark Workers (1-2)**: Execution nodes that perform the actual computation
-4. **History Server**: Web interface for viewing completed Spark job metrics and logs
+1. **DevContainer**: Development environment with Java, Spark, PySpark, and Jupyter pre-installed.
+2. **Spark Master**: Central cluster coordinator.
+3. **Spark Workers (1-2)**: Nodes that execute distributed tasks in the cluster.
+4. **History Server**: Tracks completed jobs for inspection and debugging.
 
-All containers are connected through a dedicated Docker network, allowing seamless communication between components while isolating them from the host network.
+All containers communicate through a shared Docker bridge network to ensure seamless communication without needing to expose internal ports unnecessarily.
 
 ## Getting Started
+
 To use this DevContainer:
 
-1. Download the spark DevContainer folder from my [Github](https://github.com/KrijnvanderBurg/.devcontainer/tree/main/spark).
-1. Add the spark folder to `.devcontainer` folder in your project root folder.
-2. Open in VSCode with the DevContainers extension installed
-    - Press F1 to open the command palette
-    - Type and select Dev Containers: Rebuild and Reopen in Container
-    - VS Code will build the Docker images and start the containers defined in docker-compose.yml
-    - This process may take several minutes the first time
+1. Download the Spark DevContainer folder from my [GitHub](https://github.com/KrijnvanderBurg/.devcontainer/tree/main/spark).
+2. Place the Spark folder inside the `.devcontainer` folder in your project root.
+3. Open the folder in VSCode with the DevContainers extension installed.
+   - Press `F1`, then select **Dev Containers: Rebuild and Reopen in Container**
+   - The setup will auto-build the environment and start up all containers.
 
-The entire environment will build automatically, with no additional configuration required.
+That's it — you're inside a full Spark cluster running locally.
 
-### Pyspark Jobs
-[ create any .py file for pyspark and use vscode task ctrl shift B to spark-submit to master, or manually run the shell file]
+### PySpark Jobs
 
-### Jupyter Notebook
-[ during devcontainer creation, jupyter server is initialised with spark-init.py in the devcontainer folder, this automatically setups a sparksession which can be used. but one can still be defined in code too.]
+A major benefit of this setup is the ability to run full-fledged PySpark scripts directly against the local Spark cluster. Here's how it works:
+
+✅ How to Run PySpark Jobs
+
+Once you're inside the DevContainer, you can execute any .py file using spark-submit. There are two primary ways to do it:
+
+**Option 1: VSCode Task (Recommended)**
+
+The DevContainer includes a VSCode tasks.json entry that lets you run the current file as a Spark job with a simple shortcut.
+
+Usage:
+1. Open a .py file with your PySpark code.
+2. Press Ctrl+Shift+B (Windows/Linux) or Cmd+Shift+B (Mac) to trigger the default build task.
+3. VSCode will use spark-submit.sh to submit your script to the cluster.
+
+Under the hood, it runs:
+
+```bash
+/opt/spark/bin/spark-submit \
+  --master spark://spark-master:7077 \
+  --deploy-mode client \
+  --conf spark.driver.host=devcontainer \
+  --conf spark.driver.bindAddress=0.0.0.0 \
+  your_script.py
+```
+This allows for consistent submission no matter the job or file structure.
+
+**Option 2: Manual Script Execution**
+Prefer running things manually? You can do that too.
+
+Usage:
+```bash
+.devcontainer/spark/spark-submit.sh path/to/your_script.py
+```
+
+This gives you full control over your job execution, handy when you're debugging or customizing configurations.
+
+
+### Jupyter Notebook Support (VSCode-Only, No Browser)
+
+This DevContainer setup fully supports running Jupyter notebooks directly within VSCode — no external browser, no token auth, no Jupyter server process. Everything executes natively inside the container.
+
+How It Works
+
+VSCode detects .ipynb files and launches the built-in notebook interface. The kernel automatically connects to the Python interpreter inside the container, which comes preconfigured with pyspark.
+
+The container also auto-loads a Spark session on startup, so you're ready to go without any manual setup.
+
+#### Preloaded Spark Context
+
+The container initializes Spark automatically using an IPython startup script.
+
+That script runs the following:
+```python
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder \
+    .appName("VSCode Notebook") \
+    .master("spark://spark-master:7077") \
+    .config("spark.driver.host", "devcontainer") \
+    .config("spark.driver.bindAddress", "0.0.0.0") \
+    .config("spark.ui.port", "4040") \
+    .getOrCreate()
+
+sc = spark.sparkContext
+sc.setLogLevel("WARN")
+```
+
+This means every notebook session starts with spark and sc pre-initialized.
+
+
+## Implementation Details
+
+### DevContainer Configuration
+
+The DevContainer includes essential extensions and VSCode settings for Spark and Jupyter development:
 
 
 ## Implementation Details
