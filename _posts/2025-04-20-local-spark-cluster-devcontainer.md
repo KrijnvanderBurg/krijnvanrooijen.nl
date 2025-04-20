@@ -58,6 +58,19 @@ To use this DevContainer:
 
 The entire environment will build automatically, with no additional configuration required.
 
+```bash
+git clone https://github.com/KrijnvanderBurg/local-spark-cluster
+cd local-spark-cluster
+code .
+```
+
+Once VSCode prompts to reopen in container, the entire environment will be built and started automatically. This includes:
+
+1. Building all necessary Docker images
+2. Starting the Spark master and worker nodes
+3. Configuring network communication between containers
+4. Setting up Python environments with PySpark
+
 ## Key Implementation Details
 
 ### Docker Compose Configuration
@@ -88,11 +101,49 @@ x-spark-worker-template: &spark-worker-template
 services:
   # Development environment with all tools installed
   devcontainer:
-    # ...existing code...
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - SPARK_VERSION=${SPARK_VERSION}
+        - HADOOP_VERSION=3
+        - PYTHON_VERSION=${PYTHON_VERSION}
+    volumes:
+      - ../../:/workspace
+    networks:
+      - spark-network
+    ports:
+      - "4040:4040"  # Expose Spark application UI
+    environment:
+      - SPARK_LOCAL_IP=0.0.0.0
+      - SPARK_DRIVER_HOST=devcontainer
+      - SPARK_PUBLIC_DNS=localhost
+      - SPARK_MASTER_URL=spark://spark-master:${SPARK_MASTER_PORT}
   
   # Spark master node
   spark-master:
-    # ...existing code...
+    image: apache/spark:${SPARK_VERSION}
+    command: "/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master"
+    hostname: spark-master
+    environment:
+      - SPARK_MASTER_HOST=spark-master
+      - SPARK_MASTER_PORT=${SPARK_MASTER_PORT}
+      - SPARK_MASTER_WEBUI_PORT=${SPARK_MASTER_WEBUI_PORT}
+      - SPARK_PUBLIC_DNS=localhost  # For UI URLs to be accessible from host
+      - SPARK_LOCAL_IP=spark-master  # Keep internal hostname for Docker network communication
+    ports:
+      - "${SPARK_MASTER_WEBUI_PORT}:${SPARK_MASTER_WEBUI_PORT}"   # Web UI
+      - "${SPARK_MASTER_PORT}:${SPARK_MASTER_PORT}"   # Spark master port
+    volumes:
+      - spark-logs:/opt/spark/logs
+      - spark-events:/opt/spark/events
+      - ./spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+      - ../../:/workspace
+    networks:
+      - spark-network
+    depends_on:
+      - devcontainer
+    restart: unless-stopped
   
   # Worker nodes using the template
   spark-worker-1:
@@ -101,12 +152,49 @@ services:
     environment:
       - SPARK_WORKER_CORES=${SPARK_WORKER1_CORES}
       - SPARK_WORKER_MEMORY=${SPARK_WORKER1_MEMORY}
-      # ...existing code...
+      - SPARK_WORKER_WEBUI_PORT=${SPARK_WORKER1_WEBUI_PORT}
+      - SPARK_PUBLIC_DNS=localhost  # For UI URLs to be accessible from host
+      - SPARK_LOCAL_IP=spark-worker-1  # Keep internal hostname for Docker network communication
+    ports:
+      - "${SPARK_WORKER1_WEBUI_PORT}:${SPARK_WORKER1_WEBUI_PORT}"   # Worker 1 UI
 
   spark-worker-2:
     <<: *spark-worker-template
     hostname: spark-worker-2
-    # ...existing code...
+    environment:
+      - SPARK_WORKER_CORES=${SPARK_WORKER2_CORES}
+      - SPARK_WORKER_MEMORY=${SPARK_WORKER2_MEMORY}
+      - SPARK_WORKER_WEBUI_PORT=${SPARK_WORKER2_WEBUI_PORT}
+      - SPARK_PUBLIC_DNS=localhost  # For UI URLs to be accessible from host
+      - SPARK_LOCAL_IP=spark-worker-2  # Keep internal hostname for Docker network communication
+    ports:
+      - "${SPARK_WORKER2_WEBUI_PORT}:${SPARK_WORKER2_WEBUI_PORT}"   # Worker 2 UI
+
+  # History server has no dependencies - keeps running independently
+  spark-history-server:
+    image: apache/spark:${SPARK_VERSION}
+    command: "/opt/spark/bin/spark-class org.apache.spark.deploy.history.HistoryServer"
+    hostname: spark-history
+    environment:
+      - SPARK_PUBLIC_DNS=localhost
+      - SPARK_LOCAL_IP=0.0.0.0
+    ports:
+      - "${SPARK_HISTORY_WEBUI_PORT}:${SPARK_HISTORY_WEBUI_PORT}"   # History UI
+    volumes:
+      - spark-logs:/opt/spark/logs
+      - spark-events:/opt/spark/events
+      - ./spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+    networks:
+      - spark-network
+    restart: unless-stopped
+
+networks:
+  spark-network:
+    driver: bridge
+
+volumes:
+  spark-logs:
+  spark-events:
 ```
 
 ### Environment Configuration
@@ -156,7 +244,14 @@ The DevContainer is configured with VSCode settings and extensions optimized for
                 // Jupyter notebook integration
                 "jupyter.interactiveWindow.textEditor.executeSelection": true,
                 "jupyter.notebookFileRoot": "${workspaceFolder}",
-                // ...existing code...
+                "jupyter.kernelSpecConnectionMetadata": [
+                    {
+                        "kernelspec": {
+                            "name": "pyspark",
+                            "display_name": "PySpark"
+                        }
+                    }
+                ],
                 
                 // Tasks for submitting Spark jobs
                 "tasks": {
@@ -169,6 +264,10 @@ The DevContainer is configured with VSCode settings and extensions optimized for
                             "group": {
                                 "kind": "build",
                                 "isDefault": true
+                            },
+                            "presentation": {
+                                "reveal": "always",
+                                "panel": "new"
                             }
                         }
                     ]
@@ -233,7 +332,7 @@ The environment includes a convenience script for submitting PySpark jobs to the
 
 ```bash
 #!/bin/bash
-# Use first argument as the file to submit
+# Use first argument as the file to submit, or default to sample_job.py if no argument provided
 FILE_TO_SUBMIT=${1}
 
 /opt/spark/bin/spark-submit \
@@ -251,69 +350,20 @@ This script is integrated into VSCode tasks, allowing submission of the current 
 The DevContainer setup provides three web interfaces for monitoring:
 
 1. **Spark Master UI** (http://localhost:8080): View cluster status, worker nodes, and running applications
+   
+   ![Spark Master UI](/assets/graphics/2025-04-20-local-spark-cluster-devcontainer/spark-master-ui.png)
+
 2. **Spark History Server** (http://localhost:18080): Examine completed jobs and their performance metrics
+   
+   ![Spark History Server](/assets/graphics/2025-04-20-local-spark-cluster-devcontainer/spark-history-server.png)
+
 3. **Application UI** (http://localhost:4040): Monitor running applications in real-time
+   
+   ![Application UI](/assets/graphics/2025-04-20-local-spark-cluster-devcontainer/spark-application-ui.png)
 
 These interfaces provide valuable insights for debugging and optimization during development.
 
-### Example Workflow
 
-A typical development workflow with this environment:
-
-1. Open a Jupyter notebook for interactive exploration
-2. Develop and test transformations interactively
-3. Move finalized code to a PySpark script
-4. Submit the script to the cluster using the VSCode task
-5. Monitor execution using the Spark UIs
-6. View history and logs in the History Server after completion
-
-This workflow provides a seamless experience from exploration to execution.
-
-## Performance Tuning
-
-The local Spark cluster is configured with sensible defaults for development, but can be tuned for specific workloads:
-
-1. **Worker Resources**: Adjust cores and memory in the `.env` file based on the host machine capabilities
-2. **Executor Settings**: Configure executor memory and cores in the notebook initialization or submit script
-3. **Parallelism**: Set the default parallelism based on the available worker cores
-
-For memory-intensive workloads, consider:
-
-```python
-spark = SparkSession.builder \
-    .config("spark.executor.memory", "1g") \
-    .config("spark.driver.memory", "2g") \
-    .config("spark.memory.offHeap.enabled", "true") \
-    .config("spark.memory.offHeap.size", "1g") \
-    # ...existing code...
-    .getOrCreate()
-```
-
-## Common Challenges and Solutions
-
-### Connection Refused Errors
-
-If Spark jobs fail with "connection refused" errors, verify that:
-
-1. The driver host is correctly set to `devcontainer`
-2. The driver bind address is set to `0.0.0.0`
-3. The master URL uses the service name: `spark://spark-master:7077`
-
-### Memory Issues
-
-For "out of memory" errors:
-
-1. Reduce the worker memory allocation in the `.env` file
-2. Add explicit garbage collection hints in your code
-3. Consider enabling off-heap memory
-
-### Slow Performance
-
-To improve performance:
-
-1. Use appropriate partitioning for your data
-2. Enable caching for frequently accessed DataFrames
-3. Adjust the number of shuffle partitions based on data size
 
 ## Extending the DevContainer
 
@@ -322,6 +372,24 @@ The base DevContainer can be extended for specific use cases:
 1. **Additional Libraries**: Add Python packages to the Dockerfile
 2. **Custom Configurations**: Mount additional configuration files into the containers
 3. **Integration with Other Services**: Add services like PostgreSQL or Kafka to the Docker Compose file
+
+For example, to add PostgreSQL for storing processed data:
+
+```yaml
+# Add to docker-compose.yml
+postgres:
+  image: postgres:14
+  environment:
+    - POSTGRES_PASSWORD=postgres
+    - POSTGRES_USER=postgres
+    - POSTGRES_DB=sparkdata
+  ports:
+    - "5432:5432"
+  volumes:
+    - postgres-data:/var/lib/postgresql/data
+  networks:
+    - spark-network
+```
 
 ## Conclusion
 
