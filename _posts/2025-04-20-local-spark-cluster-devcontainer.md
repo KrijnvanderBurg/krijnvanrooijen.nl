@@ -1,5 +1,3 @@
-```markdown
-// filepath: /home/x0r/Documents/GitHub/krijnvanrooijen.nl/_posts/2025-04-20-local-spark-cluster-devcontainer.md
 ---
 title: "Local Spark Cluster DevContainer: Streamline Data Engineering Workflows"
 date: 2025-04-20
@@ -398,4 +396,3 @@ The Spark cluster DevContainer provides a comprehensive, production-like environ
 This approach aligns with modern DevOps practices by treating development environments as code, making them reproducible, shareable, and version-controlled. The result is a more efficient development cycle and more reliable testing for Spark applications.
 
 All code for this DevContainer setup is available on GitHub and can be adapted to specific project requirements.
-```
