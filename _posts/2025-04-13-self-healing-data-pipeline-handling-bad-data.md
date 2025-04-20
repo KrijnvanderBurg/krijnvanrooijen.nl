@@ -126,4 +126,4 @@ By implementing these practices, data pipelines become more resilient, capable o
 ## Companion Notebook
 A notebook containing all code examples from this article, along with a minimal explanation of the core concepts, is available on my GitHub. It serves as a reference implementation for adapting or extending the approach.
 
-🔗 [GitHub – Self-Healing Data Pipelines Notebook](https://github.com/KrijnvanderBurg/data-engineering-patterns/blob/main/handle_bad_data/notebook.ipynb)
+🔗 [GitHub – Automatically Handle and Reprocess Bad Data Notebook](https://github.com/KrijnvanderBurg/data-engineering-patterns/blob/main/handle_bad_data/notebook.ipynb)
