@@ -1,7 +1,7 @@
 ---
-title: "Local Spark Cluster DevContainer: Streamline Data Engineering Workflows"
+title: "Local Multi-Node Spark Cluster in a DevContainer – Zero Setup, Plug and Play"
 date: 2025-04-20
-excerpt: "Create a fully functional, containerized Spark cluster development environment with minimal setup using DevContainers and Docker Compose."
+excerpt: "Learn how to set up a fully configured, multi-node Spark cluster locally using DevContainer with Docker Compose. Ready out-of-the-box, immediately start coding with zero configuration needed — perfect for data engineering and PySpark development."
 tags:
 - DevContainer
 - Docker
