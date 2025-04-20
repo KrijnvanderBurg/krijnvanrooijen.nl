@@ -18,6 +18,8 @@ This article will cover the first steps towards making a self-healing pyspark pi
 
 - Retains a historical record of bad data for testing purposes, ensuring that all data can be reprocessed correctly in future pipeline versions.
 
+A complete notebook with the full code and a condensed version of this article is available and linked at the bottom of the article.
+
 ## 1. Separating Bad Data
 The first step in handling bad data is to isolate them so the pipeline can continue processing valid data without disruption. Whether due to schema mismatches or data quality issues, bad records should be separated from valid data, allowing the pipeline to run uninterrupted while the problematic records are set aside for later investigation and adjustments to the pipeline for reprocessing.
 
@@ -120,3 +122,8 @@ Additionally, tracking bad data provides a test archive for debugging, testing, 
 3. **Track Bad Data History**: Retain a historical record of bad data using features like CDF to ensure records can be tested and debugged in the future.
 
 By implementing these practices, data pipelines become more resilient, capable of handling errors efficiently, and can evolve without being derailed by bad data.
+
+## Companion Notebook
+A notebook containing all code examples from this article, along with a minimal explanation of the core concepts, is available on my GitHub. It serves as a reference implementation for adapting or extending the approach.
+
+🔗 [GitHub – Automatically Handle and Reprocess Bad Data Notebook](https://github.com/KrijnvanderBurg/data-engineering-patterns/blob/main/handle_bad_data/notebook.ipynb)
