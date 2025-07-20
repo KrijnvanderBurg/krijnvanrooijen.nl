@@ -1,5 +1,5 @@
 ---
-title: "How I Built DevOps Without Configuration Drift
+title: How I Built DevOps Without Configuration Drift
 date: 2025-07-20
 excerpt: "Most DevOps setups fail because local development and CI/CD use different configurations. Learn how shared configuration architecture with nested submodules solves this fundamental problem."
 tags:
@@ -8,7 +8,7 @@ tags:
 - python
 - git
 - submodules
-image: /assets/graphics/2025-01-20-shared-configuration-architecture/thumbnail-shared-config.png
+image: /assets/graphics/2025-07-20-devops-shared-configuration-architecture/thumbnail.png
 pin: false
 ---
 
