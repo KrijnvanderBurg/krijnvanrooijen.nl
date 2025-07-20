@@ -50,7 +50,7 @@ Instead of maintaining separate configurations, what if both local and CI/CD env
 
 The core principle is simple but powerful: **One script, one config, consistent execution everywhere.** This means your local development environment and your CI/CD pipeline don't just use similar configurations—they use the identical configuration files and execution scripts. When something works locally, it's guaranteed to work in CI/CD because there's literally no difference between the two environments.
 
-![DevContainer startup tasks and problems tab preview](/assets/graphics/2025-07-20-devops-shared-configuration-architecture/devcontainer_startup_tasks_and_problems.gif)
+![DevContainer startup tasks and problems tab preview](https://github.com/KrijnvanderBurg/zero-drift-devops-framework/blob/87053c4b16bda1630fe9ea9da03f9bdce68419f8/docs/devcontainer_startup_tasks_and_problems.gif)
 *Watch 20+ development tools configure automatically in a DevContainer using shared configurations*
 
 ![Azure DevOps Pipeline Screenshot](/assets/graphics/2025-07-20-devops-shared-configuration-architecture/azure_devops_pipeline_screenshot.png)
