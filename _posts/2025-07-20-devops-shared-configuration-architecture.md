@@ -194,7 +194,7 @@ The pattern is technology-agnostic: if you have a command-line tool with configu
 
 The key insight is that most development tools follow the same pattern: `tool-name target-path config-file`. Once you standardize this into shared scripts, the consistency benefits compound across every tool in your stack. You're not just solving the linting inconsistency problem—you're solving the entire "configuration drift between environments" problem that affects every single tool in modern software development.
 
-> 📖 **Interested in the broader DevOps philosophy?** Read about [enforcing code quality via CI/CD](2024-12-11-enforce-code-quality-via-cicd.md) and how this shared configuration approach fits into a complete zero-drift DevOps strategy.
+> 📖 **Interested in the broader DevOps philosophy?** Read about [enforcing code quality via CI/CD](https://krijnvanrooijen.nl/blog/enforce-code-quality-via-cicd/) and how this shared configuration approach fits into a complete zero-drift DevOps strategy.
 
 ## Getting Started
 
@@ -209,7 +209,7 @@ Here's your first-day implementation that you can complete in under an hour:
 5. **Create a VS Code task** that calls your script with the shared config
 6. **Update your CI/CD pipeline** to call the same script with the same config
 
-> 🚀 **Ready to dive deeper?** Check out my comprehensive guide on [DevContainers with automated workflow tasks](2024-11-11-devcontainers-automate-workflow-tasks.md) to see how VS Code tasks integrate with this shared configuration approach.
+> 🚀 **Ready to dive deeper?** Check out my comprehensive guide on [DevContainers with automated workflow tasks](https://krijnvanrooijen.nl/blog/devcontainers-automate-workflow-tasks/) to see how VS Code tasks integrate with this shared configuration approach.
 
 Once you see how much debugging time you save with just one tool, expanding to your entire toolchain becomes compelling. The initial complexity pays off immediately once you have even 2-3 tools configured consistently. More importantly, once your teammates experience the reliability of perfectly consistent tooling, they'll start asking when you're going to add the same treatment to other tools.
 
