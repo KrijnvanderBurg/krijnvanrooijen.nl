@@ -1,0 +1,306 @@
+---
+title: "How I Eliminated ETL Boilerplate with Configuration-Driven Pipelines"
+date: 2025-01-26
+excerpt: "Stop writing repetitive ETL code for every pipeline. Learn how Flint's configuration-driven approach transforms data engineering from a programming task to a configuration exercise, making pipelines maintainable and accessible to non-programmers."
+tags:
+- data engineering
+- etl
+- apache spark
+- configuration-driven
+- python
+image: /assets/graphics/2025-01-26-configuration-driven-etl-pipelines/thumbnail.png
+pin: false
+---
+
+Every data pipeline I've built follows the same predictable pattern: read from source A, apply transformations B and C, write to destination D. Yet each pipeline requires hundreds of lines of custom code, proper error handling, and ongoing maintenance. The same boilerplate, repeated endlessly. After building my tenth nearly-identical pipeline, I asked myself: why are we writing code for patterns that never change?
+
+This frustration led me to develop Flint, a framework that replaces ETL code with JSON configuration files. Instead of programming pipelines, you declare them. The framework handles all the execution details while you focus on what your data should do, not how to implement it.
+
+## The Problem: Predictable Patterns, Unnecessary Code
+
+Consider this typical Spark pipeline that every data engineer has written countless times:
+
+```python
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+
+spark = SparkSession.builder.appName("CustomerPipeline").getOrCreate()
+
+# Extract
+customers = spark.read.option("header", True).csv("data/customers.csv")
+orders = spark.read.json("data/orders.json")
+
+# Transform
+customers_clean = customers.dropDuplicates(["customer_id"])
+customers_filtered = customers_clean.filter(col("email").isNotNull())
+joined = customers_filtered.join(orders, "customer_id", "inner")
+result = joined.select("customer_id", "name", "email", "order_total")
+
+# Load
+result.write.mode("overwrite").parquet("output/customer_orders.parquet")
+```
+
+This code is straightforward, but multiply it across dozens of pipelines and you have:
+- **Thousands of lines of boilerplate** that follow identical patterns
+- **Inconsistent implementations** as different developers write the same logic differently
+- **High barrier to entry** for analysts who understand the data but not the code
+- **Maintenance burden** when upgrading Spark versions or changing patterns
+
+The most frustrating part? The logic is simple—we're just reading, transforming, and writing data. The complexity comes from expressing it in code rather than configuration.
+
+## The Solution: Configuration Replaces Code
+
+With Flint, the same pipeline becomes a JSON configuration:
+
+```jsonc
+{
+    "runtime": {
+        "id": "customer-orders-pipeline",
+        "jobs": [{
+            "id": "main-job",
+            "engine_type": "spark",
+            "extracts": [
+                {
+                    "id": "extract-customers",
+                    "extract_type": "file",
+                    "data_format": "csv",
+                    "location": "data/customers.csv",
+                    "options": {"header": true}
+                },
+                {
+                    "id": "extract-orders",
+                    "extract_type": "file",
+                    "data_format": "json",
+                    "location": "data/orders.json"
+                }
+            ],
+            "transforms": [
+                {
+                    "id": "clean-customers",
+                    "upstream_ids": ["extract-customers"],
+                    "functions": [
+                        {"function_type": "dropduplicates", "arguments": {"columns": ["customer_id"]}},
+                        {"function_type": "filter", "arguments": {"condition": "email IS NOT NULL"}}
+                    ]
+                },
+                {
+                    "id": "join-data",
+                    "upstream_ids": ["clean-customers"],
+                    "functions": [
+                        {"function_type": "join", "arguments": {
+                            "other_upstream_id": "extract-orders",
+                            "on": ["customer_id"],
+                            "how": "inner"
+                        }},
+                        {"function_type": "select", "arguments": {
+                            "columns": ["customer_id", "name", "email", "order_total"]
+                        }}
+                    ]
+                }
+            ],
+            "loads": [{
+                "id": "load-results",
+                "upstream_id": "join-data",
+                "load_type": "file",
+                "data_format": "parquet",
+                "location": "output/customer_orders.parquet",
+                "mode": "overwrite"
+            }]
+        }]
+    }
+}
+```
+
+Execute with:
+```bash
+python -m flint run --runtime-filepath="pipeline.jsonc"
+```
+
+No programming required. The configuration is self-documenting, version-control friendly, and immediately understandable to anyone who knows the data.
+
+## How Component Referencing Works
+
+Flint's power comes from its ID-based component system. Each component has a unique identifier that downstream components reference:
+
+```
+Pipeline Flow:
+├── extract-customers ──┐
+├── extract-orders ─────┼──> join-data ──> load-results
+                        └──> clean-customers ──┘
+```
+
+This referencing system enables:
+- **Reusability**: Reference the same extract in multiple transforms
+- **Flexibility**: Reorganize pipeline flow without rewriting logic
+- **Clarity**: Visual understanding of data lineage
+- **Modularity**: Swap components without affecting others
+
+## Real-World Impact: Making Data Engineering Accessible
+
+### Before Flint: The Programming Barrier
+
+In my previous role, business analysts would request data pipelines but couldn't build them. The workflow was painful:
+1. Analyst documents requirements
+2. Data engineer translates to code
+3. Multiple iterations to get it right
+4. Engineer maintains the code forever
+
+Each pipeline took days to deliver and created ongoing maintenance burden.
+
+### After Flint: Self-Service Analytics
+
+Now analysts create their own pipelines. They understand concepts like "filter" and "join"—they just couldn't express them in Python. With JSON configuration:
+1. Analyst writes configuration directly
+2. Validates with `python -m flint validate`
+3. Deploys immediately
+4. Modifies without engineering help
+
+Pipeline delivery went from days to hours. Maintenance burden practically disappeared.
+
+## Integrated Alerting Without Code
+
+Traditional error handling requires custom code for each pipeline. Flint includes configuration-driven alerting that routes errors intelligently:
+
+```jsonc
+{
+    "alert": {
+        "channels": [
+            {
+                "id": "slack-data-team",
+                "channel_type": "http",
+                "url": "https://hooks.slack.com/services/YOUR/WEBHOOK",
+                "method": "POST"
+            },
+            {
+                "id": "ops-email",
+                "channel_type": "email",
+                "smtp_server": "smtp.company.com",
+                "to_emails": ["ops@company.com"]
+            }
+        ],
+        "triggers": [
+            {
+                "id": "database-errors",
+                "channel_ids": ["ops-email"],
+                "rules": [
+                    {"rule_type": "exception_regex", "pattern": ".*database.*|.*connection.*"}
+                ]
+            },
+            {
+                "id": "production-errors",
+                "channel_ids": ["slack-data-team"],
+                "rules": [
+                    {"rule_type": "env_vars_matches", "env_var_name": "ENVIRONMENT", "env_var_values": ["production"]}
+                ]
+            }
+        ]
+    }
+}
+```
+
+Database errors go to ops. Production errors notify Slack. No custom error handling code needed.
+
+## Extending with Custom Business Logic
+
+While Flint provides standard transforms, you can create custom functions for business-specific logic:
+
+```python
+@TransformFunctionRegistry.register("calculate_customer_ltv")
+class CustomerLTVFunction(Function):
+    """Calculate customer lifetime value."""
+    
+    def apply(self, df: DataFrame) -> DataFrame:
+        return df.withColumn("ltv", 
+            col("purchases") * col("avg_order") * col("retention_rate"))
+```
+
+Use in configuration:
+```jsonc
+{"function_type": "calculate_customer_ltv", "arguments": {}}
+```
+
+This encapsulates business logic in tested, reusable components while keeping pipelines configuration-driven.
+
+## The DevOps Integration
+
+Following my philosophy from [previous DevOps work](https://krijnvanrooijen.nl/blog/devops-shared-configuration-architecture/), Flint configurations work identically in development and production. The same configuration file that runs in your DevContainer executes in CI/CD:
+
+**Local Development:**
+```bash
+python -m flint run --runtime-filepath="pipeline.jsonc"
+```
+
+**CI/CD Pipeline:**
+```yaml
+- script: python -m flint run --runtime-filepath="pipeline.jsonc"
+```
+
+No configuration drift. No environment-specific bugs. The configuration is the single source of truth.
+
+## When Configuration Beats Code
+
+Flint excels when:
+- **Standard patterns dominate** your pipelines (90% of ETL work)
+- **Non-technical users** need to create or modify pipelines
+- **Consistency matters** more than custom optimization
+- **Maintenance burden** is crushing your team
+- **Rapid prototyping** is essential
+
+It's not suitable when:
+- Complex streaming with custom windowing is required
+- Pipeline logic requires dynamic runtime decisions
+- Performance optimization needs low-level control
+
+## Implementation Details: The Architecture
+
+Flint follows principles from my [DevContainer setups](https://krijnvanrooijen.nl/blog/devcontainers-the-ideal-team-environment/) and [shared configuration architecture](https://krijnvanrooijen.nl/blog/devops-shared-configuration-architecture/):
+
+1. **Type Safety**: Configurations validate against Pydantic models before execution
+2. **Engine Agnosticism**: Same configuration works across Spark, Polars (coming soon), and other engines
+3. **Composability**: Components reference each other by ID, enabling flexible arrangements
+4. **Separation of Concerns**: Extract, Transform, Load are distinct, focused components
+
+The framework handles:
+- Schema validation and type checking
+- Error handling and retry logic
+- Resource management and cleanup
+- Performance optimization
+
+You handle: writing configuration files.
+
+## Getting Started
+
+### Installation
+```bash
+git clone https://github.com/krijnvanderburg/config-driven-ETL-framework.git
+cd config-driven-ETL-framework
+poetry install
+```
+
+### Run Example Pipeline
+```bash
+python -m flint run \
+    --runtime-filepath="examples/join_select/job.jsonc" \
+    --alert-filepath="examples/join_select/alert.jsonc"
+```
+
+### Create Your Pipeline
+Start with the examples, modify for your needs. The configuration structure is intuitive—if you understand your data flow, you can write the configuration.
+
+## The Future of Data Engineering
+
+Configuration-driven development isn't just about reducing code—it's about democratizing data engineering. When pipelines become configuration files:
+- **Business analysts** can build their own data workflows
+- **Data engineers** focus on framework improvements, not pipeline maintenance
+- **Teams** share consistent, understandable patterns
+- **Organizations** scale data capabilities without scaling engineering teams
+
+## Conclusion
+
+After years of writing the same ETL patterns in different codebases, I realized the problem wasn't the complexity of data engineering—it was expressing simple patterns through code. Flint proves that most pipelines don't need custom programming; they need proper configuration.
+
+The framework has transformed how my team approaches data engineering. Pipelines that took days now take hours. Maintenance dropped dramatically. Most importantly, non-programmers can now build production-ready data pipelines.
+
+Stop writing boilerplate ETL code. Let configuration drive your pipelines.
+
+🔗 [GitHub – Flint: Configuration-Driven ETL Framework](https://github.com/krijnvanderburg/config-driven-ETL-framework)
