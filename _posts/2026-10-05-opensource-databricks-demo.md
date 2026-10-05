@@ -8,7 +8,7 @@ tags:
 - Spark
 - Data Platform
 - Sovereignty
-image: /assets/graphics/2026-10-05-databricks-oss-demo/thumbnail.png
+image: /assets/graphics/2025-07-20-devops-shared-configuration-architecture/thumbnail.png
 pin: false
 ---
 
